@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" \>
+<title> Mineral world map </title>
+<meta name="viewport" content="width=device-width, (initial-scale=1.0")>
+
+<link rel="stylesheet" type="text/css" href="css.css"> 
+
+</head>
+
+<body>
+
+<div id="wrapper">
+	<div id="callout">
+	<p> Call us at <b> 070-123-11-2 </b></p>
+	</div>
+
+	<header>
+	<center>
+	<a href="#"><img src="images/headericon.png" alt="Mineral World Map" title="Mineral World Map"></a>
+	</center>
+	</header>
+
+	<nav>
+		<ul>
+			<li class="active"><a href="#">Home</a></li>
+			<li><a href="#">Mineral Map</a></li>
+			<li><a href="#">Log in</a></li>
+			<li><a href="#">Register</a></li>
+			<li><a href="#">Upload data</a></li>
+			<li><a href="#">About</a></li>
+		</ul>
+
+	</nav>
+	<div class="banner">
+		<center><
+		<a href="#"><img src="images/correlation_bigMap.jpg" alt="Correlation map" title="Correlation map" width="50%" height="50%"></a>
+		</center>
+	</div>
+	<section class="left-col">
+
+	<p style="text-indent: 50px">The mineral world map is a place where you can upload locations of different minerals. This map is for people who enjoy rocks and want to know where they can be found and also help others find certain rocks.</p>
+
+	</section>
+	 <script>
+      function initMap() {
+        var uluru = {lat: -25.363, lng: 131.044};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: uluru
+        });
+        var marker = new google.maps.Marker({
+          position: uluru,
+          map: map
+        });
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA3ALyiTPHeWowYfKDExIKCOrNNWT5lDf4&callback=initMap">
+    </script>
+
+
+
+	<aside class="sidebar">
+		<div class="mineral1">
+
+		</div>
+
+	</aside>
+
+</div>
+
+</body>
+
+</html>
