@@ -12,6 +12,7 @@
 			if(isset($_POST['remember'])){
 				$remeber = $_POST['remember'];
 				setcookie('username', $username, time()+60*60*24*7);
+				setcookie('password', md5($password), time()+60*60*24*7);
 			}
 			session_start();
 			$_SESSION['username'] = $username;

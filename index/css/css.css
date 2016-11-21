@@ -1,0 +1,28 @@
+
+ #map {
+    height: 400px;
+    width: 100%;
+ }
+
+ body {
+ 	background: #F140001;
+ 	font-size: 18px;
+ 	overflow: auto;		
+ }
+
+ img {
+ 	text-align: center;
+ 	max-width: 100%;
+ 	height: auto;
+ 	width: auto;
+ }
+
+ #wrapper {
+ 	margin: 0 auto;
+ 	max-width: 80%;
+ 	width: 98%;
+ 	background: #FEFBE8;
+ 	border: 1px solid #878E63;
+ 	border-radius: 2px;
+ 	box-shadow: 0 0 10px 0px rgba(12, 3, 25, 0.8);	
+ }
