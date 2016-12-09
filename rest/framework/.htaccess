@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+
+    #rewrite to /framework/items/viewall for instance.
+    RewriteRule    ^$    public/    [L]
+    #RewriteCond %{REQUEST_FILENAME} !-f
+    #RewriteRule    ^$ ../../index.html     [L]
+
+    #rewrite user to public if there is an url
+    RewriteRule    (.*) public/$1    [L]
+ </IfModule>

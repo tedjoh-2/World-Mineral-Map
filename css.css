@@ -1,0 +1,63 @@
+
+
+ body {
+ 	background: #F140001;
+ 	font-size: 18px;
+ 	overflow: auto;		
+ 	margin: 0px;
+ }
+
+ img {
+ 	text-align: center;
+ 	max-width: 100%;
+ 	height: auto;
+ 	width: auto;
+ }
+
+ .container{
+ 	margin: 0 auto;
+ 	max-width: 90%;
+ 	width: 100%;
+ 	background: #FEFBE8;
+ 	border: 1px solid #878E63;
+ 	box-shadow: 0 0 10px black;
+ }
+ .form-group{
+ 	max-width: 50%;
+ 	width: auto;
+ }
+.navbar{
+	max-width: 100%;
+	border: 1px solid #878E63;
+ 	box-shadow: 0 0 10px black;
+}
+#nav-main{
+	max-width: 90%;
+	margin: 0 auto;
+	color:  #004d00;
+	}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+color: #000;  /*Sets the text hover color on navbar*/
+}
+
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active >   
+ a:hover, .navbar-default .navbar-nav > .active > a:focus {
+color: white; /*BACKGROUND color for active*/
+background-color: #206020;
+}
+
+  .navbar-default {
+    background-color: #004d00;
+    border-color: #030033;
+}
+
+ .nav > li > a:hover,
+ .nav > li > a:focus {
+    text-decoration: none;
+    background-color: 004d00; /*Change rollover cell color here*/
+  }
+
+
+  .navbar-default .navbar-nav > li > a {
+   color: white; /*Change active text color here*/
+    }
