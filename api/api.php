@@ -149,7 +149,7 @@
 			}
 		$id = (int)$this->_REQUEST['id'];
 		}
-		
+		private function 
 		/*
 		 *	Encode array into JSON
 		*/

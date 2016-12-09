@@ -11,21 +11,7 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
 
-    <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-      #map {
-        height: 100%;
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
- 	padding: 0;
-      }
-    </style>
-
-  <link rel = "stylesheet" type = "text/css" href = "css.css">
+    <link rel = "stylesheet" type = "text/css" href = "css.css">
 
 </head>
   <body>
@@ -70,35 +56,39 @@
       <br/>
       <input type="submit" value="Action" class="btn btn-success btn-lg">
      </form>
-    </center>
-  </div> 
+    </center>  
 
-   <script type = "text/javascript">
+	<script type = "text/javascript">
 	function click(){
-		console.log("clicked");
-		console.log(document.getElementById('mapname').value);
-		console.log(x);
-		console.log(y);
+		console.log("click");
 		var name = document.getElementById("mapname").value;
-		if(document.getElementById("mapname") && document.getElementById("mapname").value){
-			console.log("only name");
-			var xhttp = new XMLHttpRequest();
-			xhttp.onreadystatechange = function(){
-				if(xhttp.readyState == 4){ //Can also check this.status == 500 if website is http:
- 					console.log("within if()");
-					document.getElementById("text").innerHTML = xhttp.responseText;
-				}
-			};
-			xhttp.open("POST", "api/create?name="+name+"&x="+x+"&y="+y, true);
-			xhttp.send(null);
+		var x = document.getElementById("x").value;
+		var y = document.getElementById("y").value;
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function(){
+			if(xhttp.readyState == 4){ //Can also check this.status == 500 if website is http:
+				console.log("within if()");
+				document.getElementById("text").innerHTML = xhttp.responseText;
+			}
+		};
+		if(name && x && y){
+		xhttp.open("POST", "api/insert?name="+name+"&x="+x+"&y="+y, true);
+		xhttp.send(null);
 		}
-		
-	}
-   </script> 
-  
-  <div id="map">
-    <script>
-      function initMap() {
+		else if(name){
+		xhttp.open("GET","api/searchmap?name="+name,true);
+		xhttp.send(null);
+		}
+		else{
+		xhttp.open("POST","api/getall",true);
+		xhttp.send(null);
+		}
+	} 
+	</script>  
+	<div class="map" id="map">
+	<center>
+	<script>    
+      	function initMap() {
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 3,
           center: {lat: -28.024, lng: 140.887}
@@ -137,8 +127,7 @@
         var markerCluster = new MarkerClusterer(map, markers,
             {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
       }
-<!-- var locations = new http request 
--->
+
       var locations = [
         {lat: -31.563910, lng: 147.154312},
         {lat: -33.718234, lng: 150.363181},
@@ -164,14 +153,14 @@
         {lat: -42.735258, lng: 147.438000},
 	{lat: 59.3293234, lng: 18.0685808}
       ]
-    </script>
-    </div>
-    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-    </script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_O-DWv_X7RsiS9oQuqAeNCrwpJPcgrDM&signed_in=true&libraries=drawing&callback=initMap">
-    </script>
-  </body>
+	</script>
+	</center>
+    	<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    	</script>
+    	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_O-DWv_X7RsiS9oQuqAeNCrwpJPcgrDM&signed_in=true&libraries=drawing&callback=initMap">
+	</script>
+	</div>
+</body>
 <footer>
 <div id ="text">
 </div>
