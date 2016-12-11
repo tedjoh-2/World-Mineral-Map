@@ -14,30 +14,24 @@
 
 <link rel="stylesheet" type="text/css" href="css.css"> 
 
-	<script type = "text/javascript">
+	
+	/*
 	function login(){
-		console.log("login");
-		console.log("user " + document.getElementById("username").value + " pass " + document.getElementById("password").value);
 		var username = document.getElementById("username").value;
 		var password = document.getElementById("password").value;
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function(){
-			if(xhttp.readyState == 4 && xhttp.status == 200){ //Can also check this.status == 500 if website is http:
-				console.log("within if()");
-				//document.getElementById("form").innerHTML = xhttp.responseText;
-				var foo  = xhttp.responseText;
-				alert(foo);
+			if(xhttp.readyState == 4 && xhttp.status == 200){
+				document.getElementById("main").innerHTML = xhttp.responseText;
 			}
 			console.log(xhttp.readyState);
 			console.log(xhttp.status);
 		}
-		console.log("ready state: "+xhttp.readyState);
-		console.log("status: "+xhttp.status);
-		xhttp.open("POST", "api/login/"+username, true);
+		xhttp.open("POST","/api/login?username="+username+"&password="+password, true);
 		xhttp.send(null);
-	} 
-
-	</script>
+	}
+	*/
+	
   </head>
   <body>
   	<nav class="navbar navbar-default navbar-fnt navbar-backgrnd navbar-full" id="nav-main">
@@ -49,13 +43,13 @@
 	    		<a class="navbar-brand" href="login.html"> Login</a>
 	    	</li>
 	    	<li class="nav-item">
-	    		<a class="navbar-brand" href="register.html"> Register</a>
+	    		<a class="navbar-brand" href=""> Register</a>
 	    	</li>
 	    	<li class="nav-item">
 	    		<a class="navbar-brand" href=""> Upload</a>
 	    	</li>
 	    	<li class="nav-item">
-	    		<a class="navbar-brand" href="geomapCluster.html"> My map</a>
+	    		<a class="navbar-brand" href=""> My map</a>
 	    	</li>
 	    	<li class="nav-item">
 	    		<a class="navbar-brand" href=""> Mineral info</a>
@@ -65,23 +59,49 @@
 	    	</li>
 	    </ul>
     </nav>
-   	<div class="container" id = "form">
+   	<div class="container">
    	<center>
-
-	<h1> Login or <a href="register.html">register</a>!</h1>
-    	<form onsubmit="login()" class="form-inline" nameid="loginForm" method="POST">
+    	<form onsubmit="login()" class="form-inline" nameid="loginForm">
     		<div class="form-group">
     			<input type="text" id="username" name="username" class="form-control form-control-lg" placeholder="username">
     		</div>
     		<div class="form-group">
-    			<input type="hidden" id="password" name="password" class="form-control form-control-lg" placeholder="password">
+    			<input type="password" id="password" name="password" class="form-control form-control-lg" placeholder="password">
     		</div>
-    		<input type="submit" class="btn btn-success btn-lg" >
+    		<input type="submit" name="submit"  value="Login" class="btn btn-success btn-lg" >
     		
     	</form>
     	</center>
 
-	<div id = "main">
+	<script type = "text/javascript">
+	function login(){
+		
+		console.log("login");
+		var username = document.getElementById("username").value;
+		var password = document.getElementById("password").value;
+		username = btoa(username);
+		password = btoa(password);
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function(){
+			if(xhttp.readyState == 4 && xhttp.status == 200){ //Can also check this.status == 500 if website is http:
+				console.log("within if()");
+				console.log(xhttp.readyState);
+				console.log(xhttp.status);
+				//document.getElementById("text").innerHTML = xhttp.responseText;
+				var foo = xhttp.responseText;
+				//alert(foo);
+			}
+		}
+		console.log("state");
+		console.log(xhttp.readyState);
+		console.log("status");
+		console.log(xhttp.status);
+		xhttp.open("POST","/api/login?username="+username+"&password="+password, true);
+		xhttp.send(null);
+		console.log("WTDEWJADOAWJODJAWODJAOWJDOAWJD");
+	}
+	</script>
+	<div id = "text">
 	</div> 
     </div>
 
@@ -89,4 +109,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
   </body>
+	<div id = "main">
+	response from login: 
+	</div>
 </html>
