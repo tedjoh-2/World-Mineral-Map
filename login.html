@@ -13,7 +13,6 @@
 <title> Mineral world map </title>
 
 <link rel="stylesheet" type="text/css" href="css.css"> 
-
 	<script type = "text/javascript">
 	function login(){
 		console.log("login");
@@ -31,12 +30,12 @@
 			console.log(xhttp.readyState);
 			console.log(xhttp.status);
 		}
+		console.log("api/login/"+username+"/"+password);
 		console.log("ready state: "+xhttp.readyState);
 		console.log("status: "+xhttp.status);
-		xhttp.open("POST", "api/login/"+username, true);
+		xhttp.open("POST", "api/login/"+username+"/"+password, true);
 		xhttp.send(null);
 	} 
-
 	</script>
   </head>
   <body>
@@ -69,12 +68,12 @@
    	<center>
 
 	<h1> Login or <a href="register.html">register</a>!</h1>
-    	<form onsubmit="login()" class="form-inline" nameid="loginForm" method="POST">
+    	<form onsubmit="login()" class="form-inline" method="POST">
     		<div class="form-group">
     			<input type="text" id="username" name="username" class="form-control form-control-lg" placeholder="username">
     		</div>
-    		<div class="form-group">
-    			<input type="hidden" id="password" name="password" class="form-control form-control-lg" placeholder="password">
+		<div class="form-group">
+			<input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="password">
     		</div>
     		<input type="submit" class="btn btn-success btn-lg" >
     		

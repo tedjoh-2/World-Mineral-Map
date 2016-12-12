@@ -4,7 +4,10 @@
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteCond %{REQUEST_FILENAME} !-s
 
-	RewriteRule ^([^/]+)/([^/]+)/([^/]+)/?$ api.php?rquest=$1&var1=$2&var2=$3 [L]
+	RewriteRule ^([^/]+)/([^/]+)/([^/]+)/([^/]+)/?$ api.php?rquest=$1&var1=$2&var2=$3&var3=$4 [QSA,NC,L]
+
+
+	RewriteRule ^([^/]+)/([^/]+)/([^/]+)/?$ api.php?rquest=$1&var1=$2&var2=$3 [QSA,NC,L]
 
 	RewriteRule ^([^/]+)/([^/]+)/?$ api.php?rquest=$1&var1=$2 [QSA,NC,L]
 

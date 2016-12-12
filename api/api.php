@@ -1,5 +1,5 @@
 <?php
-    
+session_start();
 	/* 
 		This is an example class script proceeding secured API
 		To use this class you should keep same as query string and function name
@@ -32,25 +32,28 @@
 		  PRIMARY KEY (`user_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
  	*/
-	
+
 	require_once("Rest.inc.php");
-	
+
 	class API extends REST {
-	
+
 		private $data = "";
-		
+
 		const DB_SERVER = "localhost";
 		const DB_USER = "root";
 		const DB_PASSWORD = "";
 		const DB = "WMM";
-		
+
 		public $db = NULL;
-	
+
+	//	session_start(); //Session start, not neccessarily with an id, only after login.
+	//	private $_SESSION['id']; //set in login.
+
 		public function __construct(){
 			parent::__construct();				// Init parent contructor
 			$this->dbConnect();					// Initiate Database connection
 		}
-		
+
 		/*
 		 *  Database connection 
 		*/
@@ -60,15 +63,14 @@
 				mysql_select_db(self::DB,$this->db);
 			}
 		}
-		
+
 		/*
 		 * Public method for access api.
 		 * This method dynmically call the method based on the query string
 		 *
 		 */
 		public function processApi(){
-			
-		
+
 			$func = strtolower(trim(str_replace("/","",$_REQUEST['rquest'])));
 			if((int)method_exists($this,$func) > 0){
 				$this->$func();
@@ -76,6 +78,15 @@
 				$this->response('',404);				// If the method not exist with in this class, response would be "Page not found".
 			}
 		}
+
+		function removeMagicQuotes() {
+			if ( get_magic_quotes_gpc() ) {
+				$_GET    = stripSlashesDeep($_GET   );
+				$_POST   = stripSlashesDeep($_POST  );
+				$_COOKIE = stripSlashesDeep($_COOKIE);
+			}
+		}
+ 
 		
 		/* 
 		 *	Simple login API
@@ -89,26 +100,60 @@
 			//if($this->get_request_method() != "POST"){
 			//	$this->response('',406);
 			//}
-			$username =$_REQUEST['var1'];
-			$password =$_POST['password'];
+			$username = $_REQUEST['var1'];
+			$password = $_REQUEST['var2'];
 			// Input validations
-			echo "$username";
-			echo "$password";
+			//echo "$username";
+			//echo "$password";
 			//if(isset($username)
 			if(!empty($username) && !empty($password)){
 				//$sql = mysql_query("SELECT id, username  FROM users WHERE username = '$username' AND password = '$password' LIMIT 1", $this->db);
 				$sql = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
-				//$result = mysql_query($sql, $this);
+
 				if($row = mysql_num_rows($sql) == 1){
-					session_start();
+					//session_start(); //Behövs nog inte.
 					$result = mysql_fetch_array($sql,MYSQL_ASSOC);
 					//echo json_encode("welcome " . $result['id']);
 					$_SESSION['id'] = $result['id'];
+					$id = $_SESSION['id'];
 					// If success everythig is good send header as "OK" and user details
-					$this->response($this->json("Welcome " . $_SESSION['id'] . "."), 200);
+					$this->response($this->json($result), 200);
 				}
-				$this->response('', 204);	// If no records "No Content" status
+				$this->response("wrong input", 204);	// If no records "No Content" status
 
+			}
+			// If invalid inputs "Bad Request" status message and reason
+			$error = array('status' => "Failed", "msg" => "Invalid Email address or Password");
+			$this->response($this->json($error), 400);
+		}
+
+		private function register(){
+
+			$username = $_REQUEST['var1'];
+			$password = $_REQUEST['var2'];
+
+			if(!empty($username) && !empty($password)){
+				$sql = mysql_query("SELECT username FROM `logins` WHERE 1", $this->db);
+				$loginNames = mysql_fetch_array($sql, MYSQL_ASSOC);
+				foreach($loginNames as $names){
+				if($username == $names){
+					$this->response("Username allready taken.", 204);
+		
+					}
+				}
+				
+
+				$sql = mysql_query("INSERT INTO `logins`(`username`,`password`) VALUES ('$username','$password')",$this->db);
+
+				$sql = mysql_query("SELECT id FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
+				$result = mysql_fetch_array($sql,MYSQL_ASSOC);
+
+				$_SESSION['id'] = $result['id'];
+
+				$id = $_SESSION['id'];
+				// If success everythig is good send header as "OK" and user details
+				$this->response($this->json($result), 200);
+				
 			}
 			// If invalid inputs "Bad Request" status message and reason
 			$error = array('status' => "Failed", "msg" => "Invalid Email address or Password");
@@ -158,49 +203,73 @@
 		private	function getAll(){
 			$sql = "SELECT `longitude`, `latitude` FROM `maps` WHERE '1'";
 			$res = mysql_query($sql);
-			$types = array();
-			while($row[] = mysql_fetch_assoc($res));
-			array_pop($row);
-			echo json_encode($row);
+			if($row = mysql_num_rows($res) > 0){
+				while($fetch = mysql_fetch_assoc($res)){
+					$result[] = "{lat: " . $fetch['latitude'] . ",  lng: " . $fetch['longitude'] . "}";
+				}
+				$this->response($result, 200);
+			}else{
+				$this->response($result, 400); //wrong input returns nothing.
+			}
 		}
 
 		private function getMap(){ // man kommer alltid logga in först, för att få session och id.
-			$map = $_REQUEST['mapname'];
-			if(isset($map) && isset($_SESSION['id'])){ //SESSION ID BEHÖVS HÄR EGENTLIGEN.
-				$sql = "SELECT `id`, `name`, `longitude`, `latitude` FROM `personalmaps` WHERE name = '$map'";
-				$result = mysql_query($sql);
-				$types = array();
-				while($row[] = mysql_fetch_assoc($result));
-				array_pop($row);
-				echo json_encode($row);
-			}else{
-				echo json_encode("Wrong input");
-			}
-		}
-/*
-		private function insertMap(){
-			$map = $_REQUEST['mapname'];
-			$x = $_REQUEST['x'];
-			$y = $_REQUEST['y'];
-			if(isset($map) && isset($x) && isset($y) && isset($_SESSION['id'])){
 
-				$ifirst = "INSERT INTO `maps`(`longitude`,`latitude`) VALUES ('$x','$y')";
-				$isecond = "INSERT INTO `personalmaps`(`id`,`name`,`longitude`,`latitude`) VALUES ('$_SESSION['id']', '$map','$x','$y')"; 
-				if(isset($ifirst) && isset($isecond)){
-
-					$sql = "SELECT * FROM `personalmaps` WHERE id = '$_SESSION['id']' AND name = '$map'";
-					$result = mysql_query($sql);
-					$types = array();
-
-					while($row[] = mysql_fetch_assoc($result));
-					//array_pop();
-					echo json_encode($row);
+			$map = $_REQUEST['var1'];
+			$id = $_SESSION['id'];
+			$control = "SELECT * FROM `logins` WHERE id = '$id'";
+			$query = mysql_query($control);
+			$result = "";
+			if(isset($map) && isset($query)){ //SESSION ID BEHÖVS HÄR EGENTLIGEN.
+				$sql = "SELECT `id`, `name`, `longitude`, `latitude` FROM `personalmaps` WHERE name = '$map' AND id = '$id'";
+				$res = mysql_query($sql);
+				if($row = mysql_num_rows($res) > 0){
+					while($fetch = mysql_fetch_assoc($res)){
+						$result[] = "{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}";
+					}
+					echo json_encode($result);
+					exit;
+				}else{
+					$this->response("wrong result", 204); //return nothing, wrong input.
 				}
 			}else{
-				echo json_encode("Something is wrong with login or the specified map");
+				$this->response("return nothing", 400); //return nothing.
 			}
 		}
-*/
+
+		private function insertMap(){
+
+			$map = $_REQUEST['var1'];
+			$x = $_REQUEST['var2'];
+			$y = $_REQUEST['var3'];
+			$id = $_SESSION['id'];
+			$control = "SELECT * FROM `logins` WHERE id = '$id'";
+			$query = mysql_query($control);
+			if(isset($map) && isset($x) && isset($y) && isset($query)){
+				
+				$ifirst = "INSERT INTO `maps`(`longitude`,`latitude`) VALUES ('$x','$y')";
+				$sqlone = mysql_query($ifirst);
+				
+				$isecond = "INSERT INTO `personalmaps`(`id`,`name`,`longitude`,`latitude`) VALUES ('$id', '$map','$x','$y')"; 
+				$sqltwo = mysql_query($isecond);
+				
+				if(isset($sqlone) && isset($sqltwo)){
+
+					$sql = "SELECT * FROM `personalmaps` WHERE id = '$id' AND name = '$map'";
+					$res = mysql_query($sql);
+					while($fetch = mysql_fetch_assoc($res)){
+
+						$result[] = "{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}";
+					}
+					$this->response($result, 200);
+				}else{
+					$this->response($id, 204); //nothing
+				}
+			}else{
+				$this->response("Wrong input", 400);
+			}
+		}
+
 		/*
 		 *	Encode array into JSON
 		*/
@@ -209,10 +278,10 @@
 				return json_encode($data);
 			}
 		}
-		
+
 		private function logout(){
 			session_destroy();
-			return json_encode("session destroyed");
+			echo json_encode("session destroyed");
 		}
 	}
 	
