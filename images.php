@@ -12,40 +12,17 @@
 
 
     <link rel = "stylesheet" type = "text/css" href = "css.css">
-
+<script src="http://www.w3schools.com/lib/w3data.js"></script>
 
 </head>
 <body>
+<div w3-include-html="overhead.html"></div>
 
-<nav class="navbar navbar-default navbar-fnt navbar-backgrnd navbar-full" id="nav-main">
-                <ul class="nav navbar-nav">
-                        <li class="nav-item">
-                                <a class="nav-link" href="index.html">Home<span class="sr-only">(current)</span></a>
-                        </li>
-                        <li class="nav-item">
-                                <a class="navbar-brand" href="login.html"> Login</a>
-                        </li>
-                        <li class="nav-item">
-                                <a class="navbar-brand" href="register.html"> Register</a>
-                        </li>
-                        <li class="nav-item">
-                                <a class="navbar-brand" href="images.php"> Upload</a>
-                        </li>
-                        <li class="nav-item">
-                                <a class="navbar-brand" href="geomapCluster.html"> My map</a>
-                        </li>
-                        <li class="nav-item">
-                                <a class="navbar-brand" href=""> Mineral info</a>
-                        </li>
-                        <li class="nav-item">
-                                <a class="navbar-brand" href=""> About</a>
-                        </li>
-                        <li class="nav-item">
-                                <a class="navbar-brand" href="logout.html"> Logout</a>
-                        </li>
-                    </ul>
-  </nav>
 
+<script>
+w3IncludeHTML();
+</script>
+<div class="container" id = "form">
 	<center>
 	<form class="form-inline" enctype="multipart/form-data" method="post">
 		<br/>
@@ -89,7 +66,7 @@
 			mysql_close($conn);
 		}
 ?>
-
+</div>
 </body>
 
 </html>

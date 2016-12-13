@@ -131,6 +131,7 @@ session_start();
 			$username = $_REQUEST['var1'];
 			$password = $_REQUEST['var2'];
 			if(!empty($username) && !empty($password)){
+				
 				$sql = "SELECT * FROM 'logins' WHERE username = '$username'";
 				$res = mysql_query($sql);
 				//$this->response($this->json($username), 200);
@@ -141,14 +142,19 @@ session_start();
 
 				$sql = mysql_query("INSERT INTO `logins`(`username`,`password`) VALUES ('$username','$password')",$this->db);
 
-				$this->response($this->json($username), 200);
-				$this->login();
-				//$sql2 = mysql_query("SELECT id FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
-				//$result = mysql_fetch_array($sql2,MYSQL_ASSOC);
-				//$_SESSION['id'] = $result['id'];
-				//$id = $_SESSION['id'];
-				// If success everythig is good send header as "OK" and user details
-				//$this->response($this->json($result), 200);
+				
+				$sql2 = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
+				if($row = mysql_num_rows($sql2) == 1){
+					$result = mysql_fetch_array($sql2,MYSQL_ASSOC);
+					//echo json_encode("welcome " . $result['id']);
+					$_SESSION['id'] = $result['id'];
+					// If success everythig is good send header as "OK" and user details
+					$this->response($this->json($result), 200);
+
+
+				}
+				
+
 			}
 			// If invalid inputs "Bad Request" status message and reason
 			$error = array('status' => "Failed", "msg" => "Invalid Email address or Password");
@@ -198,9 +204,13 @@ session_start();
 		private	function getAll(){
 			$sql = "SELECT `longitude`,`latitude` FROM `maps` WHERE '1'";
 			$res = mysql_query($sql);
+			
 			if($row = mysql_num_rows($res) > 0){
-				while($fetch = mysql_fetch_assoc($res)){
-					$result[] = "{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}";
+				while($fetch = mysql_fetch_array($res)){
+					//$result[] = $fetch['latitude'];
+					//$result[] = $fetch['longitude'];
+					//result_push("{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}");
+					$result[] =  "{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}"; 
 				}
 				echo json_encode($result);
 				exit;
