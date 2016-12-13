@@ -14,6 +14,31 @@
 
 <link rel="stylesheet" type="text/css" href="css.css"> 
 
+	<script type = "text/javascript">
+	function register(){
+		console.log("login");
+		console.log("user " + document.getElementById("username").value + " pass " + document.getElementById("password").value);
+		var username = document.getElementById("username").value;
+		var password = document.getElementById("password").value;
+		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function(){
+			if(xhttp.readyState == 4 && xhttp.status == 200){ //Can also check this.status == 500 if website is http:
+				console.log("within if()");
+				//document.getElementById("form").innerHTML = xhttp.responseText;
+				var foo  = xhttp.responseText;
+				alert(foo);
+			}
+			console.log(xhttp.readyState);
+			console.log(xhttp.status);
+		}
+		console.log("api/register/"+username+"/"+password);
+		console.log("ready state: "+xhttp.readyState);
+		console.log("status: "+xhttp.status);
+		xhttp.open("POST", "api/register/"+username+"/"+password, true);
+		xhttp.send(null);
+	}
+	</script> 
+
   </head>
   <body>
   	<nav class="navbar navbar-default navbar-fnt navbar-backgrnd navbar-full" id="nav-main">
@@ -45,10 +70,10 @@
        	<center>
         <form class="form-inline" id="regform">
             <div class="form-group">
-                <input type="text" name = "username" class="form-control" placeholder="Username">
+                <input type="text" id="username" name = "username" class="form-control" placeholder="Username">
             </div>
             <div class="form-group">
-                <input type="password" name = "password" class="form-control" placeholder="Password">
+                <input type="password" id="password" name = "password" class="form-control" placeholder="Password">
             </div>
             <button  onclick="register()"class="btn btn-success"> Register </button>
             

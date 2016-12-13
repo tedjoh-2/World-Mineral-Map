@@ -1,5 +1,4 @@
-<script>
-function initMap() {
+function initnewMap() {
 	var map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 3,
 		center: {lat: 18.024, lng: 59.887}
@@ -38,6 +37,4 @@ function initMap() {
 	var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 	}
 
-	var locations = foo;
-
-</script>
+	var locations = [{'lat: 0.0, lng: 0.0}]

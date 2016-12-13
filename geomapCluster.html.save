@@ -14,6 +14,7 @@
 	
 	<script>
         function clickMe(){
+	//	console.log("clickMe()");
                 var one = document.getElementById("mapname").value;
 		var two = document.getElementById("x").value;
 		var three = document.getElementById("y").value;
@@ -23,10 +24,11 @@
 			if(request.readyState == 4 && request.status == 200){
 				console.log("ready to send " + request.readyState);
 				console.log("ready to send " + request.status);   
-				var arr = request.responseText.Split(',');
-				console.log("response locations: " + arr);
-				updateMap(arr);
+				var foo = request.responseText;
+				response(foo);
         		}
+	//		console.log("responseText " + request.reponseText);
+	//		console.log("status " + request.status);
 		}
 		if(one && two && three){
 	//		console.log("map " + one + " x " + two + " y " + three);
@@ -42,59 +44,25 @@
 			request.send(null);
 		}
 	}
-	
-	function updateMap(arr){
-		locations[];
-		for(i = 0; i < arr.length; i++){
-			locations.push(arr[i]);
-		}
 
-		console.log("new locations: " + location);
-		
+	function response(foo){
 
-		var map = new google.maps.Map(document.getElementById('mapWindow'), {
-        		zoom: 2,
-        		center: {lat: 0.0, lng: 0.0}
-        	});
-
-        	var drawingManager = new google.maps.drawing.DrawingManager({
-        		drawingMode: google.maps.drawing.OverlayType.MARKER,
-        		drawingControl: true,
-        		drawingControlOptions: {
-         			position: google.maps.ControlPosition.TOP_CENTER,
-          			drawingModes: ['marker','circle']
-          		},
-          	circleOptions: {
-          		fillColor: '#fff00',
-			fillOpacity: 1,
-			strokeweight: 5,
-			clickable: false,
-			editable: true,
-			zIndex: 1
-		}
-	});
-
-        drawingManager.setMap(map);		
+		var point = new Glatlng(location.lat, location.lng);
+		var marker = new Gmarker(point);
+		maps.addOverlay(marker);
+		bounds.extend(marker,getPoint());
+		$("<li/>")
+		.html(location.name)
+		.click(function(){
+			showMessage(marker, location.name);
+		})
+		.appendTo("#list");
+		GEvent.addListener(marker,"click", function(){
+			showMessage(this);
+		});		
 	}
 
-	var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-	var markers = locations.map(function(location, i) {
-		return new google.maps.Marker({
-		position: location,
-		label: labels[i % labels.length]
-        	});
-        });
-
-        var markerCluster = new MarkerClusterer(map, markers,
-            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-
-
-	marker.addListener('click',function(){
-		infoWindow.setContent(infowincontent);
-		infoWindow.open(map,marker);
-	});
-</script>
+        </script>
 </head>
   <body>
   <nav class="navbar navbar-default navbar-fnt navbar-backgrnd navbar-full" id="nav-main">
@@ -143,18 +111,15 @@
      </form>
     </center>  
 	
-	<div class="map" id="mapWindow">
+	<div class="map" id="map">
 	<center>
 	<script>    
       	function initMap() {
-        var map = new google.maps.Map(document.getElementById('mapWindow'), {
+        var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 3,
-          center: {lat: 0.0, lng: 0.0}
+          center: {lat: 18.024, lng: 59.887}
         });
 
-	//Might not work, keep notice.
-	var infoWindow = new google.maps.InfoWindow;
-	
 	//Create a simple menu for markers and circles that can be placed anywhere on the map.
 	var drawingManager = new google.maps.drawing.DrawingManager({
 	  drawingMode: google.maps.drawing.OverlayType.MARKER,
@@ -195,7 +160,7 @@
             {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
       }
 
-      var locations = [
+ /*     var locations = [
         {lat: -31.563910, lng: 147.154312},
         {lat: -33.718234, lng: 150.363181},
         {lat: -33.727111, lng: 150.371124},
@@ -220,9 +185,8 @@
         {lat: -42.735258, lng: 147.438000},
 	{lat: 59.3293234, lng: 18.0685808}
       ]
-	console.log("old locations: " + locations);
-
-	</script>
+*/	</script>
+	</center>
    	<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
     	</script>
     	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_O-DWv_X7RsiS9oQuqAeNCrwpJPcgrDM&signed_in=true&libraries=drawing&callback=initMap">

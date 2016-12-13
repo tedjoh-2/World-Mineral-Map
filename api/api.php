@@ -86,9 +86,9 @@ session_start();
 				$_COOKIE = stripSlashesDeep($_COOKIE);
 			}
 		}
- 
-		
-		/* 
+
+
+		/*
 		 *	Simple login API
 		 *  Login must be POST method
 		 *  email : <USER EMAIL>
@@ -111,7 +111,6 @@ session_start();
 				$sql = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
 
 				if($row = mysql_num_rows($sql) == 1){
-					//session_start(); //Behövs nog inte.
 					$result = mysql_fetch_array($sql,MYSQL_ASSOC);
 					//echo json_encode("welcome " . $result['id']);
 					$_SESSION['id'] = $result['id'];
@@ -131,29 +130,25 @@ session_start();
 
 			$username = $_REQUEST['var1'];
 			$password = $_REQUEST['var2'];
-
 			if(!empty($username) && !empty($password)){
-				$sql = mysql_query("SELECT username FROM `logins` WHERE 1", $this->db);
-				$loginNames = mysql_fetch_array($sql, MYSQL_ASSOC);
-				foreach($loginNames as $names){
-				if($username == $names){
-					$this->response("Username allready taken.", 204);
-		
-					}
+				$sql = "SELECT * FROM 'logins' WHERE username = '$username'";
+				$res = mysql_query($sql);
+				//$this->response($this->json($username), 200);
+
+				if($res && mysql_num_rows($res)>0){
+					$this->response("Username allready taken", 204);
 				}
-				
 
 				$sql = mysql_query("INSERT INTO `logins`(`username`,`password`) VALUES ('$username','$password')",$this->db);
 
-				$sql = mysql_query("SELECT id FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
-				$result = mysql_fetch_array($sql,MYSQL_ASSOC);
-
-				$_SESSION['id'] = $result['id'];
-
-				$id = $_SESSION['id'];
+				$this->response($this->json($username), 200);
+				$this->login();
+				//$sql2 = mysql_query("SELECT id FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
+				//$result = mysql_fetch_array($sql2,MYSQL_ASSOC);
+				//$_SESSION['id'] = $result['id'];
+				//$id = $_SESSION['id'];
 				// If success everythig is good send header as "OK" and user details
-				$this->response($this->json($result), 200);
-				
+				//$this->response($this->json($result), 200);
 			}
 			// If invalid inputs "Bad Request" status message and reason
 			$error = array('status' => "Failed", "msg" => "Invalid Email address or Password");
@@ -201,16 +196,16 @@ session_start();
 		}
 		
 		private	function getAll(){
-			$sql = "SELECT `longitude`, `latitude` FROM `maps` WHERE '1'";
+			$sql = "SELECT `longitude`,`latitude` FROM `maps` WHERE '1'";
 			$res = mysql_query($sql);
 			if($row = mysql_num_rows($res) > 0){
 				while($fetch = mysql_fetch_assoc($res)){
-					$result[] = "{lat: " . $fetch['latitude'] . ",  lng: " . $fetch['longitude'] . "}";
+					$result[] = "{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}";
 				}
-				$this->response($result, 200);
-			}else{
-				$this->response($result, 400); //wrong input returns nothing.
+				echo json_encode($result);
+				exit;
 			}
+			echo json_encode("Wrong input");
 		}
 
 		private function getMap(){ // man kommer alltid logga in först, för att få session och id.
@@ -226,8 +221,9 @@ session_start();
 				if($row = mysql_num_rows($res) > 0){
 					while($fetch = mysql_fetch_assoc($res)){
 						$result[] = "{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}";
+						echo json_encode($result);
 					}
-					echo json_encode($result);
+					
 					exit;
 				}else{
 					$this->response("wrong result", 204); //return nothing, wrong input.
