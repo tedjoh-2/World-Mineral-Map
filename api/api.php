@@ -202,15 +202,14 @@ session_start();
 		}
 		
 		private	function getAll(){
-			$sql = "SELECT `longitude`,`latitude` FROM `maps` WHERE '1'";
+			$sql = "SELECT `latitude`,`longitude` FROM `maps` WHERE '1'";
 			$res = mysql_query($sql);
-			
+			$result = array();
 			if($row = mysql_num_rows($res) > 0){
 				while($fetch = mysql_fetch_array($res)){
-					//$result[] = $fetch['latitude'];
-					//$result[] = $fetch['longitude'];
 					//result_push("{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}");
-					$result[] =  "{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}"; 
+					$result[] = $fetch['latitude'] . "," . $fetch['longitude'];
+					//echo json_encode($result);
 				}
 				echo json_encode($result);
 				exit;
@@ -229,11 +228,11 @@ session_start();
 				$sql = "SELECT `id`, `name`, `longitude`, `latitude` FROM `personalmaps` WHERE name = '$map' AND id = '$id'";
 				$res = mysql_query($sql);
 				if($row = mysql_num_rows($res) > 0){
-					while($fetch = mysql_fetch_assoc($res)){
-						$result[] = "{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}";
-						echo json_encode($result);
+					while($fetch = mysql_fetch_array($res)){
+						$result[] = $fetch['latitude'] . "," . $fetch['longitude'];
+						//echo json_encode($result);
 					}
-					
+					echo json_encode($result);
 					exit;
 				}else{
 					$this->response("wrong result", 204); //return nothing, wrong input.
@@ -265,9 +264,10 @@ session_start();
 					$res = mysql_query($sql);
 					while($fetch = mysql_fetch_assoc($res)){
 
-						$result[] = "{lat: " . $fetch['latitude'] . ", lng: " . $fetch['longitude'] . "}";
+						$result[] = $fetch['latitude'] . "," . $fetch['longitude'];
 					}
-					$this->response($result, 200);
+					echo json_encode($result);
+					exit;
 				}else{
 					$this->response($id, 204); //nothing
 				}

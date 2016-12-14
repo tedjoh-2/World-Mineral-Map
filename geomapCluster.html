@@ -8,7 +8,6 @@
 
 
     <script src = "https://apis.google.com/js/api.js"></script>
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
     <link rel = "stylesheet" type = "text/css" href = "css.css">
 	
@@ -23,14 +22,10 @@
 			if(request.readyState == 4 && request.status == 200){
 				console.log("ready to send " + request.readyState);
 				console.log("ready to send " + request.status);   
-				//var splitResponse = request.responseText.split(",");
-				//var firstDrop = splitResponse[0];
-				//console.log("first : " + firstDrop);
-				//var secondDrop = splitResponse[1];
-				//console.log("seconds : " + secondDrop);
+
 				var response = request.responseText;
 				console.log("response locations: " + response);
-				updateMap();
+				updateMap(response);
         		}
 		}
 		if(one && two && three){
@@ -48,15 +43,41 @@
 		}
 	}
 	
-	function updateMap(){
-		console.log("updateMap()");		
-		
+	function updateMap(response){
+		console.log("updateMap()");
+
+		var array = new Array();
+		array = JSON.parse(response);
+//		console.log(array);
+
+//	-	response = response.replace(/"/g,"");
+//		response = response.replace(/},{/g,"}{");
+//		response = response.replace(/}{/g,"} {");		
+//		response = response.split(" ");
+
+		var object = {};
+		var locations = new Array();
+		array.forEach(function(arr){
+//			console.log(arr);
+			var tup = arr.split(",");
+			var lat = parseFloat(tup[0]);
+			console.log(lat);
+			var lng = parseFloat(tup[1]);
+			console.log(lng);
+			locations.push({
+				lat: lat,
+				lng: lng
+			});
+		});
+
+/*
 		var locations = [
-                        {lat: 15.123, lng: 15.152},
-                        {lat: 16.1231, lng: 17.14},
-                        {lat: 17.123, lng: 19.1231}
-                ];
-	
+                	{lat:67.850832,lng:20.190321},
+                        {lat:68.05213,lng:20.12312},
+                        {lat:67.9423,lng:20.2312}
+                ]; 
+		console.log(locations);
+*/	
 		var map = new google.maps.Map(document.getElementById('map'), {
         		zoom: 3,
         		center: {lat: 15.9, lng: 59.912}
@@ -67,7 +88,8 @@
         		drawingControl: true,
         		drawingControlOptions: {
          			position: google.maps.ControlPosition.TOP_CENTER,
-          			drawingModes: ['marker','circle']
+        			drawingModes:['marker']  
+		/*		drawingModes: ['marker','circle']
           		},
         	  	circleOptions: {
           			fillColor: '#fff00',
@@ -76,12 +98,12 @@
 				clickable: false,
 				editable: true,
 				zIndex: 1
-			}
+		*/	}
 		});
 
 		drawingManager.setMap(map);		
 		
-		var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		var labels = 'abcdefghijklmnopqrstuvwxyzåäö';
 
 		var markers = locations.map(function(location, i) {
 			return new google.maps.Marker({
@@ -93,7 +115,30 @@
 	        var markerCluster = new MarkerClusterer(map, markers,
 	            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 	
-		/*	
+		var marker = new google.maps.Marker({
+                        position:{
+                                lat: 0.0,
+                                lng: 0.0
+                        },
+                        map: map,
+                        title: 'click',
+                        draggable: true
+                });
+
+		google.maps.event.addListener(markers,'click',function(){
+			infoWindow.open(map,markers);
+		});
+	
+                google.maps.event.addListener(marker,'click', function(){
+                        infoWindow.open(map, marker);
+                });
+
+                var infoWindow = new google.maps.InfoWindow({
+                        content: "this is <b> marker info</b>"
+                });
+	
+
+	/*	
 		var contentString = '<div id= "content">' + '<p><b>Latitude: , Longitude: </b></div>';
 		
 		var infowindow = new google.maps.InfoWindow({
@@ -115,8 +160,6 @@
 <script>
 w3IncludeHTML();
 </script>
-
-
 
   <div class="container">
    <h1><center>Welcome to your personal map handler.</center></h1>
@@ -141,9 +184,9 @@ w3IncludeHTML();
 	<script>    
 	function initMap() {
 		console.log("initMap()");
-
+	
 		var locations = [
-                        {lat: -31.563910, lng: 147.154312},
+         /*             {lat: -31.563910, lng: 147.154312},
                         {lat: -33.718234, lng: 150.363181},
                         {lat: -33.727111, lng: 150.371124},
                         {lat: -33.848588, lng: 151.209834},
@@ -151,15 +194,13 @@ w3IncludeHTML();
                         {lat: -36.828611, lng: 175.790222},
                         {lat: -37.750000, lng: 145.116667},
                         {lat: 59.3293234, lng: 18.0685808}
-                        ];
-
+        */                ];
+	
 		var map = new google.maps.Map(document.getElementById('map'), {
         		zoom: 3,
 	        	center: {lat: 0.0, lng: 0.0}
 	        });
 	
-		//Does nothing at the moment.
-		var infoWindow = new google.maps.InfoWindow;
 	
 		//Create a simple menu for markers and circles that can be placed anywhere on the map.
 		var drawingManager = new google.maps.drawing.DrawingManager({
@@ -167,7 +208,7 @@ w3IncludeHTML();
 			drawingControl: true,
 			drawingControlOptions: {
 				position: google.maps.ControlPosition.TOP_CENTER,
-				drawingModes: ['marker','circle']
+				drawingModes: ['marker']
 			},
 			circleOptions: {
 				fillColor: '#fff00',
@@ -195,8 +236,28 @@ w3IncludeHTML();
 			});
 		});
 	
+		var marker = new google.maps.Marker({
+			position:{
+				lat: 0.0,
+				lng: 0.0
+			},
+			map: map,
+			title: 'click',
+			draggable: true
+		});
+
+
+		google.maps.event.addListener(marker,'click', function(){
+			infoWindow.open(map, marker);
+		});
+
+		var infoWindow = new google.maps.InfoWindow({
+			content: "this is <b> marker info</b>"
+		});
+	
+		
 		// Add a marker clusterer to manage the markers.
-		var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+	//	var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 	}
 	</script>
    	<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
@@ -204,5 +265,7 @@ w3IncludeHTML();
     	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_O-DWv_X7RsiS9oQuqAeNCrwpJPcgrDM&signed_in=true&libraries=drawing&callback=initMap">
 	</script>
 	</div>
+
+<p id="text"></p>
 </body>
 </html>
