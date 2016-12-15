@@ -108,27 +108,22 @@ session_start();
 			//if(isset($username)
 			if(!empty($username) && !empty($password)){
 				//$sql = mysql_query("SELECT id, username  FROM users WHERE username = '$username' AND password = '$password' LIMIT 1", $this->db);
-				$password = md5($password);
-				$sql = mysql_query("SELECT * FROM `logins` WHERE username = '$username'", $this->db);
-				
+				$sql = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
+
 				if($row = mysql_num_rows($sql) == 1){
 					$result = mysql_fetch_array($sql,MYSQL_ASSOC);
+					//echo json_encode("welcome " . $result['id']);
 					$_SESSION['id'] = $result['id'];
 					$id = $_SESSION['id'];
 					// If success everythig is good send header as "OK" and user details
-					echo json_encode("Successful login for user : " . $result['username'] . ", welcome.");
-					//exit;
-				
+					$this->response($this->json($result), 200);
 				}
-				else{
-					$this->response("wrong input", 204);	// If no records "No Content" status
-				}
+				$this->response("wrong input", 204);	// If no records "No Content" status
+
 			}
-			else{
-				// If invalid inputs "Bad Request" status message and reason
-				$error = array('status' => "Failed", "msg" => "Invalid Email address or Password");
-				$this->response($this->json($error), 400);
-			}
+			// If invalid inputs "Bad Request" status message and reason
+			$error = array('status' => "Failed", "msg" => "Invalid Email address or Password");
+			$this->response($this->json($error), 400);
 		}
 
 		private function register(){
@@ -144,16 +139,17 @@ session_start();
 				if($res && mysql_num_rows($res)>0){
 					$this->response("Username allready taken", 204);
 				}
-				$password = md5($username);
+
 				$sql = mysql_query("INSERT INTO `logins`(`username`,`password`) VALUES ('$username','$password')",$this->db);
+
+				
 				$sql2 = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
 				if($row = mysql_num_rows($sql2) == 1){
 					$result = mysql_fetch_array($sql2,MYSQL_ASSOC);
 					//echo json_encode("welcome " . $result['id']);
 					$_SESSION['id'] = $result['id'];
 					// If success everythig is good send header as "OK" and user details
-					echo json_encode("Successful register for user : " . $result['username'] . "! <br/> You can now login.");
-					//exit;
+					$this->json($result);
 
 
 				}
@@ -161,11 +157,11 @@ session_start();
 
 			}
 			else{
-				// If invalid inputs "Bad Request" status message and reason
-				$error = array('status' => "Failed", "msg" => "Invalid Email address or Password");
-				$this->response($this->json($error), 400);
-			}
-		}
+			// If invalid inputs "Bad Request" status message and reason
+			$error = array('status' => "Failed", "msg" => "Invalid Email address or Password");
+			$this->response($this->json($error), 400);
+		
+		
 		
 		
 		private function users(){
@@ -230,7 +226,7 @@ session_start();
 			$control = "SELECT * FROM `logins` WHERE id = '$id'";
 			$query = mysql_query($control);
 			$result = "";
-			if(isset($map) && isset($query) && (mysql_num_rows($query) == 1)){ //SESSION ID BEHÖVS HÄR EGENTLIGEN.
+			if(isset($map) && isset($query)){ //SESSION ID BEHÖVS HÄR EGENTLIGEN.
 				$sql = "SELECT `id`, `name`, `longitude`, `latitude` FROM `personalmaps` WHERE name = '$map' AND id = '$id'";
 				$res = mysql_query($sql);
 				if($row = mysql_num_rows($res) > 0){
@@ -292,8 +288,8 @@ session_start();
 		}
 
 		private function logout(){
-			echo "logout successful, farwell my love";
 			session_destroy();
+			echo json_encode("session destroyed");
 		}
 	}
 	

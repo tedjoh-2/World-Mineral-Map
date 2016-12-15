@@ -14,65 +14,68 @@
 
 <link rel="stylesheet" type="text/css" href="css.css"> 
 
-	<script type = "text/javascript">
+<script>
 	function register(){
 		console.log("login");
 		console.log("user " + document.getElementById("username").value + " pass " + document.getElementById("password").value);
+
 		var username = document.getElementById("username").value;
 		var password = document.getElementById("password").value;
+
 		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function(){
 			if(xhttp.readyState == 4 && xhttp.status == 200){ //Can also check this.status == 500 if website is http:
-				console.log("within if()");
-				//document.getElementById("form").innerHTML = xhttp.responseText;
 				var foo  = xhttp.responseText;
-				alert(foo);
+				testMethod(foo);
 			}
-			console.log(xhttp.readyState);
-			console.log(xhttp.status);
+		//	console.log(xhttp.readyState);
+		//	console.log(xhttp.status);
 		}
-		console.log("api/register/"+username+"/"+password);
-		console.log("ready state: "+xhttp.readyState);
-		console.log("status: "+xhttp.status);
-		xhttp.open("POST", "api/register/"+username+"/"+password, true);
-		xhttp.send(null);
+//		console.log("api/register/"+username+"/"+password);
+//		console.log("ready state: "+xhttp.readyState);
+//		console.log("status: "+xhttp.status);
+		if(username && password){
+			xhttp.open("POST", "/api/register/"+username+"/"+password, true);
+			xhttp.send(null);
+		}else{
+			document.getElementById("response").innerHTML = "Enter correct format please";
+		}
+	}
+
+	function testMethod(foo){
+		document.getElementById("response").innerHTML = foo;
 	}
 	</script> 
 <script src="http://www.w3schools.com/lib/w3data.js"></script>
-  </head>
-  <body>
-  
-<div w3-include-html="overhead.html"></div>
-
-
+</head>
+<body>
+<div w3-include-html="overhead.html"></div>  
 <script>
 w3IncludeHTML();
 </script>
-   	<div class="container">
-       	<center>
-	<h1>Register to continue</h1>
-        <form onsubmit="register()" class="form-inline" id="regform">
+
+   <div class="container">
+	<h1><center>Register to continue</center></h1>
+	<center>
+	<form class = "form-inline">
             <div class="form-group">
                 <input type="text" id="username" name = "username" class="form-control" placeholder="Username">
             </div>
             <div class="form-group">
                 <input type="password" id="password" name = "password" class="form-control" placeholder="Password">
             </div>
-            <input  type="submit" class="btn btn-success"  value="Register">
-            
+            <input type="button" onclick="register()" class="btn btn-success btn-lg"  value="Register">            
         </form>
-        </center>
+       </center>
 
-    </div>
-
-   <div id = "output">
-   </div>
-
-
+<div class="response" id="response">
+</div>
 
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
-    </body>
+</div>    
+
+</body>
 </html>

@@ -20,31 +20,31 @@
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
 			if(request.readyState == 4 && request.status == 200){
-				console.log("ready to send " + request.readyState);
-				console.log("ready to send " + request.status);   
-
+			//	console.log("ready to send " + request.readyState);
+			//	console.log("ready to send " + request.status);   
+				document.getElementById("text").innerHTML = request.responseText;
 				var response = request.responseText;
-				console.log("response locations: " + response);
+			//	console.log("response locations: " + response);
 				updateMap(response);
         		}
 		}
 		if(one && two && three){
-			console.log("map " + one + " x " + two + " y " + three);
+		//	console.log("map " + one + " x " + two + " y " + three);
 			request.open("POST","/api/insertMap/"+one+"/"+two+"/"+three, true);
 			request.send(null);
 		}else if(one && !two && !three){
-			console.log("only map " + one + " not x " + two + " not y " + three);
+		//	console.log("only map " + one + " not x " + two + " not y " + three);
 			request.open("GET","/api/getMap/"+one, true);
 			request.send(null);
 		}else{
-			console.log(" not map " + one + " not x " + two + " not y " + three);
+		//	console.log(" not map " + one + " not x " + two + " not y " + three);
 			request.open("GET","/api/getAll", true);
 			request.send(null);
 		}
 	}
 	
 	function updateMap(response){
-		console.log("updateMap()");
+//		console.log("updateMap()");
 
 		var array = new Array();
 		array = JSON.parse(response);
@@ -61,23 +61,15 @@
 //			console.log(arr);
 			var tup = arr.split(",");
 			var lat = parseFloat(tup[0]);
-			console.log(lat);
+//			console.log(lat);
 			var lng = parseFloat(tup[1]);
-			console.log(lng);
+//			console.log(lng);
 			locations.push({
 				lat: lat,
 				lng: lng
 			});
 		});
 
-/*
-		var locations = [
-                	{lat:67.850832,lng:20.190321},
-                        {lat:68.05213,lng:20.12312},
-                        {lat:67.9423,lng:20.2312}
-                ]; 
-		console.log(locations);
-*/	
 		var map = new google.maps.Map(document.getElementById('map'), {
         		zoom: 3,
         		center: {lat: 15.9, lng: 59.912}
@@ -103,19 +95,21 @@
 
 		drawingManager.setMap(map);		
 		
-		var labels = 'abcdefghijklmnopqrstuvwxyzåäö';
+		var labels = 'ABCDEFGHIJKLMNOPQRSTUVXYÅÄÖ';
 
 		var markers = locations.map(function(location, i) {
 			return new google.maps.Marker({
 			position: location,
 			label: labels[i % labels.length]
 	        	});
-	        });
+	/*		google.maps.event.addListener(markers, 'click',function(){
+				infoWindow.open(map,markers);
+	  */      });
 	
 	        var markerCluster = new MarkerClusterer(map, markers,
 	            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 	
-		var marker = new google.maps.Marker({
+	/*	var marker = new google.maps.Marker({
                         position:{
                                 lat: 0.0,
                                 lng: 0.0
@@ -134,20 +128,9 @@
                 });
 
                 var infoWindow = new google.maps.InfoWindow({
-                        content: "this is <b> marker info</b>"
-                });
-	
-
-	/*	
-		var contentString = '<div id= "content">' + '<p><b>Latitude: , Longitude: </b></div>';
-		
-		var infowindow = new google.maps.InfoWindow({
-			content: contentString
-		});
-		
-		marker.addListener('click',function(){
-			infoWindow.open(map,markers);
-		}); */
+                        content: 'button pressed'
+                });	
+	*/
 	}	
 	
 </script>
@@ -155,7 +138,7 @@
 <script src="http://www.w3schools.com/lib/w3data.js"></script>
 
 </head>
-
+<body>
 <div w3-include-html="overhead.html"></div>
 <script>
 w3IncludeHTML();
@@ -252,7 +235,7 @@ w3IncludeHTML();
 		});
 
 		var infoWindow = new google.maps.InfoWindow({
-			content: "this is <b> marker info</b>"
+			content: "this is <b> marker info</b> lat: lng:"
 		});
 	
 		

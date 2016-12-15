@@ -60,9 +60,17 @@ w3IncludeHTML();
 			mysql_select_db("WMM",$conn);
 			$sql = "SELECT * FROM images WHERE '1'";
 			$result = mysql_query($sql,$conn);
+			echo "<table border = '1'>
+			<tr>
+			<th> id </th>
+			<th> image </th>
+			</tr>";
 			while($row = mysql_fetch_array($result)){
-				echo '<img height="300" width="300" src="data:image;base64,'.$row[2].'">';
+				echo "<tr>";
+				echo "<td>" . $row['id'] . "</td>";
+				echo "<td>" . '<img height="300" width="300" src="data:image;base64,'.$row[2].'">'. "</td>";
 			}
+			echo "</table>";
 			mysql_close($conn);
 		}
 ?>

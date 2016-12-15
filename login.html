@@ -14,7 +14,8 @@
 <title> Mineral world map </title>
 
 <link rel="stylesheet" type="text/css" href="css.css"> 
-	<script type = "text/javascript">
+	<script>
+
 	function login(){
 		console.log("login");
 		console.log("user " + document.getElementById("username").value + " pass " + document.getElementById("password").value);
@@ -24,10 +25,8 @@
 		xhttp.onreadystatechange = function(){
 			if(xhttp.readyState == 4 && xhttp.status == 200){ //Can also check this.status == 500 if website is http:
 				console.log("Everything ready and sending info.");
-				document.getElementById("main").innerHTML = xhttp.responseText;
-				console.log("info from response: " + xhttp.responseText);
 				var foo  = xhttp.responseText;
-				alert(foo);
+				testMethod(foo);
 			}
 			console.log("readyState : " + xhttp.readyState);
 			console.log("stats : " + xhttp.status);
@@ -35,45 +34,45 @@
 		console.log("api/login/"+username+"/"+password);
 		console.log("ready state: "+xhttp.readyState);
 		console.log("status: "+xhttp.status);
-		xhttp.open("POST", "api/login/"+username+"/"+password, true);
-		xhttp.send(null);
+		if(username && password){
+			xhttp.open("POST", "api/login/"+username+"/"+password, true);
+			xhttp.send(null);
+		}else{
+			document.getElementById("response").innerHTML = "It takes two values to login";
+		}
 	} 
+
+	function testMethod(foo){
+		document.getElementById("response").innerHTML = foo;
+	}
 	</script>
 <script src="http://www.w3schools.com/lib/w3data.js"></script>
-
 </head>
-<body>
-  	
+<body>  	
 <div w3-include-html="overhead.html"></div>
-
-
 <script>
 w3IncludeHTML();
 </script>
 
-<div class="container" id = "form">
-   	<center>
-
-	<h1> Login or <a href="register.html">register</a>!</h1>
-    	<form onsubmit="login()" class="form-inline" method="POST">
+    <div class="container">
+	<h1><center> Login or <a href="register.html">register</a>!</center></h1>
+	<center>
+    	<form class="form-inline">
     		<div class="form-group">
     			<input type="text" id="username" name="username" class="form-control form-control-lg" placeholder="username">
     		</div>
 		<div class="form-group">
 			<input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="password">
     		</div>
-    		<input type="submit" class="btn btn-success btn-lg" >
-    		
+    		<input type="button" value="Login" onclick="login()" class="btn btn-success btn-lg" >
     	</form>
     	</center>
 
-	<div id = "main">
-	
-	</div> 
-    </div>
+	<div class="response" id = "response">
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
-  </body>
+ </div> 
+ </body>
 </html>
