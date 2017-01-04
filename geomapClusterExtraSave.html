@@ -4,58 +4,15 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta content = "text/html;charset=utf-8">
     <meta http-equiv="x-ua-compatible" content="IE=edge">
-    <meta name = "google-signin-client_id" content = "902483045322-ame66rsf4mu0cklmgavrh4d2u5dr57f9.apps.googleusercontent.com">
+    <meta name = "google-signin-client_id" content = "902483045322-ame66rsf4mu0cklmgavrh4d2u5dr57f9.apps.googleusercontent.com";
 
-    <link rel="stylesheet" 
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" 
-	integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" 
-	crossorigin="anonymous">
-
-    <link rel = "stylesheet" 
-	type = "text/css" 
-	href = "css.css">
-
-    <script src="http://www.w3schools.com/lib/w3data.js"></script>
     <script src = "https://apis.google.com/js/api.js"></script>
-    <script src ="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
-    <script async defer 
-	type = "text/javascript" 
-	src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyB_O-DWv_X7RsiS9oQuqAeNCrwpJPcgrDM&libraries=places&callback=initMap">
-    </script>
+    <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
 
-  </head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+    <link rel = "stylesheet" type = "text/css" href = "css.css">
 
-  <body>
-
-	<div w3-include-html="overhead.html"></div>
-	<script>
-	w3IncludeHTML();
-	</script>
-
- <div class="container">
-   <h1><center>Welcome to your personal map handler.</center></h1>
-    <center>
-     <form class="form-inline">
-      <div class="form-group">
-       <input type="text" id ="mapname" name="mapname" class="form-control form-control-lg" placeholder="Map name">
-      </div>
-      <div class="form-group">
-       <input type="text" id ="x" name="x" class="form-control form-control-lg" placeholder="Longitude">
-      </div>
-      <div class="form-group">
-       <input type="text" id="y" name="y"class="form-control form-control-lg" placeholder="Latitude">
-      </div>
-      <br/>
-      <input type="button" name="submit" value="Action" onclick="clickMe();" class="btn btn-success btn-lg">
-      <input type="button" name="submit" value="History" onclick="history();" class="btn btn-success btn-lg">
-     </form>
-    </center>
-
-	<input id="pac-input" class="controls" placeholder="Search box">
-		<div class="map" id="map">
-		<center>
-
-		<script>
+<script>
 	function history(){
 		var one = document.getElementById("mapname").value;
 		var request = new XMLHttpRequest();
@@ -86,8 +43,13 @@
 	: GIVE HISTORY A NEW GUI, POSSIBLY SCROLL BAR + nicer gui.
 */
                	var one = document.getElementById("mapname").value;
+		console.log(document.getElementById("mapname").value);
+
 		var two = document.getElementById("x").value;
+		console.log(document.getElementById("x").value);
+
 		var three = document.getElementById("y").value;
+		console.log(document.getElementById("y").value);
 
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function(){
@@ -96,7 +58,6 @@
 				updateMap(response);
         		}
 		}
-
 		if(one && two && three){
 			request.open("POST","/api/insertMap/"+one+"/"+two+"/"+three, true);
 			request.send(null);
@@ -132,16 +93,13 @@
 			});
 		});
 
-		var map = new google.maps.Map(document.getElementById("map"), {
+		var map = new google.maps.Map(document.getElementById('map'), {
         		zoom: 2,
         		center: {lat: 0.0, lng: 0.0}
         	});
-	/*
+	
 		// SEARCH BOX
-		var input = document.getElementById("pac-inputt");
-		if(document.getElementById("pac-inputt") == null){
-			console.log("failed pac-inputt");
-		}
+		var input = document.getElementById("pac-input");
                 var searchBox = new google.maps.places.SearchBox(input);
                 map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
@@ -149,7 +107,7 @@
                         searchBox.setBounds(map.getBounds());
                 });
 	
-	//	var markers = [];
+		var markers = [];
                 searchBox.addListener('places_changed', function(){
                         var places = searchBox.getPlaces();
                 
@@ -157,10 +115,10 @@
                                 return;
                         }
 
-                        locations.forEach(function(marker){
-                        	marker.setMap(null);
+                        markers.forEach(function(marker){
+                                marker.setMap(null);
                         });
-			locations = [];
+			markers = [];
 
                         var bounds = new google.maps.LatLngBounds();
                         places.forEach(function (place){
@@ -176,7 +134,7 @@
                                         scaledSize: new google.maps.Size(25,25)
                                 };
 
-                                locations.push(new google.maps.Marker({
+                                markers.push(new google.maps.Marker({
                                         map: map,
                                         icon: icon,
                                         title: place.name,
@@ -191,9 +149,9 @@
                         });
                         map.fitBounds(bounds);
                 });
-	*/
+	
 		var infowindow = new google.maps.InfoWindow();
-
+		//var marker = new google.maps.Marker({});
 		google.maps.event.addListener(map, 'click', function(e){
 			var marker = new google.maps.Marker({
 				position: e.latLng,
@@ -201,37 +159,71 @@
 			});
 			infowindow.setContent(e.latLng.toString());
 			infowindow.open(map, marker);
-
-			marker.addListener('click', function(e){
-				infowindow.setContent(e.latLng.toString());
-				infowindow.open(map, marker);
-			});
 		});
-
+/*
+		//Marker event click for info.
+		google.maps.event.addListener(marker,'click',function(e){
+			map.setZoom(9);
+			map.setCenter(marker.getPosition());
+		});
+*/		
 		var labels = 'ABCDEFGHIJKLMNOPQRSTUVXYÅÄÖ';
 
-		var markers = locations.map(function(location, i){
-			var marker = new google.maps.Marker({
-				position: location,
-				label: labels[ i % labels.length],
-				title: 'click'
-			});
-			marker.addListener('click', function(e){
-				infowindow.setContent(e.latLng.toString());
-				infowindow.open(map, marker);
-			});
-			return marker;
-		});
+		var markers = locations.map(function(location, i) {
+			return new google.maps.Marker({
+			position: location,
+			label: labels[ i % labels.length],
+			title: 'hold still'
+	        	});
+
+	        });
+
 
 	        var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 	}	
-	    
+	
+</script>
+<link rel="stylesheet" type="text/css" href="css.css">
+<script src="http://www.w3schools.com/lib/w3data.js"></script>
+
+</head>
+<body>
+<div w3-include-html="overhead.html"></div>
+<script>
+w3IncludeHTML();
+</script>
+
+  <div class="container">
+   <h1><center>Welcome to your personal map handler.</center></h1>
+    <center>
+     <form class="form-inline">
+      <div class="form-group">
+       <input type="text" id ="mapname" name="mapname" class="form-control form-control-lg" placeholder="Map name">
+      </div>
+      <div class="form-group">
+       <input type="text" id ="x" name="x" class="form-control form-control-lg" placeholder="Longitude">
+      </div>
+      <div class="form-group">
+       <input type="text" id="y" name="y"class="form-control form-control-lg" placeholder="Latitude">
+      </div>
+      <br/>
+      <input type="button" name="submit" value="Action" onclick="clickMe()" class="btn btn-success btn-lg">
+      <input type="button" name="submit" value="History" onclick="history()" class="btn btn-success btn-lg">
+      <input type="button" name="submit" value="Info" onclick="" class="btn btn-info btn-lg">
+     </form>
+    </center>  
+
+  <input id="pac-input" class="controls" type="text" placeholder"Search box before update">
+<div class="map" id="map">
+	<input id="pac-input" class="controls" type="text" placeholder"Search box before update 2">
+	<center>
+	<script>    
 	function initMap() {
 		console.log("initMap()");
 	
 		var locations = [];
 	
-		var map = new google.maps.Map(document.getElementById("map"), {
+		var map = new google.maps.Map(document.getElementById('map'), {
         		zoom: 3,
 	        	center: {lat: 0.0, lng: 0.0}
 	        });
@@ -285,26 +277,28 @@
 			});
 			map.fitBounds(bounds);
 		});
-		
+	
 	}
-		
-		</script>
-		<input id="pac-inputt" class="controls" placeholder="Search Box after update">
-		</div>
+	</script>
 
-			<center>
-			<style>
-		div.scroll{
-			background-color: #FFFFFF;
-			width : 90%;
-			height : 130px;
-			overflow: scroll;
-		}
-			</style>
+	</div>
 
-			<div class = "scroll">
-				<p id="history"></p>
-			</div>
-			</center>
-	</body>
+<center>
+<style>
+div.scroll{
+	background-color: #FFFFFF;
+	width : 90%;
+	height : 130px;
+	overflow: scroll;
+}
+</style>
+
+<div class = "scroll">
+<p id="history"></p>
+</div>
+</center>
+
+</body>
+ <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_O-DWv_X7RsiS9oQuqAeNCrwpJPcgrDM&libraries=places&callback=initMap"></script>
+
 </html>

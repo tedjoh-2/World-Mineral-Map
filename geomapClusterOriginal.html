@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta content = "text/html;charset=utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name = "google-signin-client_id" content = "902483045322-ame66rsf4mu0cklmgavrh4d2u5dr57f9.apps.googleusercontent.com";
+
+
+    <script src = "https://apis.google.com/js/api.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+    <link rel = "stylesheet" type = "text/css" href = "css.css">
+	
+<script>
+	function history(){
+		var one = document.getElementById("mapname").value;
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			if(request.readyState == 4 && request.status == 200){
+				document.getElementById("history").innerHTML = request.responseText;
+			}
+		}
+		if(one){
+			request.open("GET", "/api/getMapHistory/"+one, true);
+			request.send(null);
+		}else{
+			request.open("GET", "/api/getAllMapHistory/", true);
+			request.send(null);
+		}
+	}
+
+        function clickMe(){
+                var one = document.getElementById("mapname").value;
+		var two = document.getElementById("x").value;
+		var three = document.getElementById("y").value;
+		
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			if(request.readyState == 4 && request.status == 200){
+				var response = request.responseText;
+				updateMap(response);
+        		}
+		}
+		if(one && two && three){
+			request.open("POST","/api/insertMap/"+one+"/"+two+"/"+three, true);
+			request.send(null);
+		}else if(one && !two && !three){
+			request.open("GET","/api/getMap/"+one, true);
+			request.send(null);
+		}else{
+			request.open("GET","/api/getAll", true);
+			request.send(null);
+		}
+	}
+	
+	function updateMap(response){
+
+		var array = new Array();
+		array = JSON.parse(response);
+//		console.log(array);
+
+//	-	response = response.replace(/"/g,"");
+//		response = response.replace(/},{/g,"}{");
+//		response = response.replace(/}{/g,"} {");		
+//		response = response.split(" ");
+
+		var object = {};
+		var locations = new Array();
+		array.forEach(function(arr){
+			var tup = arr.split(",");
+			var lat = parseFloat(tup[0]);
+			var lng = parseFloat(tup[1]);
+			locations.push({
+				lat: lat,
+				lng: lng
+			});
+		});
+
+		var map = new google.maps.Map(document.getElementById('map'), {
+        		zoom: 3,
+        		center: {lat: 15.9, lng: 59.912}
+        	});
+		
+        	var drawingManager = new google.maps.drawing.DrawingManager({
+        		drawingMode: google.maps.drawing.OverlayType.MARKER,
+        		drawingControl: true,
+        		drawingControlOptions: {
+         			position: google.maps.ControlPosition.TOP_CENTER,
+        			drawingModes:['marker']  
+			}
+		});
+		
+		drawingManager.setMap(map);		
+		
+		var labels = 'ABCDEFGHIJKLMNOPQRSTUVXYÅÄÖ';
+
+		var markers = locations.map(function(location, i) {
+			return new google.maps.Marker({
+			position: location,
+			label: labels[i % labels.length]
+	        	});
+	        });
+		
+	/*	//click event
+		map.addlistener('click', function(event){
+			addMarker(event.latLng);
+		});
+	
+		function addMarker(location, map){
+			var marker = new google.maps.Marker({
+				position: location,
+				label: labels[labelIndex++ % labels.length],
+				map: map,
+				title: marker
+			});
+		}		
+	*/
+	        var markerCluster = new MarkerClusterer(map, markers,
+	            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+		
+	}	
+	
+</script>
+<link rel="stylesheet" type="text/css" href="css.css">
+<script src="http://www.w3schools.com/lib/w3data.js"></script>
+
+</head>
+<body>
+<div w3-include-html="overhead.html"></div>
+<script>
+w3IncludeHTML();
+</script>
+
+  <div class="container">
+   <h1><center>Welcome to your personal map handler.</center></h1>
+    <center>
+     <form class="form-inline">
+      <div class="form-group">
+       <input type="text" id ="mapname" name="mapname" class="form-control form-control-lg" placeholder="Identification name">
+      </div>
+      <div class="form-group">
+       <input type="text" id ="x" name="x" class="form-control form-control-lg" placeholder="Longitude">
+      </div>
+      <div class="form-group">
+       <input type="text" id="y" name="y"class="form-control form-control-lg" placeholder="Latitude">
+      </div>
+      <br/>
+      <input type="button" name="submit" value="Action" onclick="clickMe()" class="btn btn-success btn-lg">
+      <input type="button" name="submit" value="History" onclick="history()" class="btn btn-success btn-lg">
+     </form>
+    </center>  
+	
+	<div class="map" id="map">
+	<center>
+	<script>    
+	function initMap() {
+		console.log("initMap()");
+	
+		var locations = [
+         /*             {lat: -31.563910, lng: 147.154312},
+                        {lat: -33.718234, lng: 150.363181},
+                        {lat: -33.727111, lng: 150.371124},
+                        {lat: -33.848588, lng: 151.209834},
+                        {lat: -33.851702, lng: 151.216968},
+                        {lat: -36.828611, lng: 175.790222},
+                        {lat: -37.750000, lng: 145.116667},
+                        {lat: 59.3293234, lng: 18.0685808}
+        */                ];
+	
+		var map = new google.maps.Map(document.getElementById('map'), {
+        		zoom: 3,
+	        	center: {lat: 0.0, lng: 0.0}
+	        });
+	
+	
+		//Create a simple menu for markers and circles that can be placed anywhere on the map.
+		var drawingManager = new google.maps.drawing.DrawingManager({
+			drawingMode: google.maps.drawing.OverlayType.MARKER,
+			drawingControl: true,
+			drawingControlOptions: {
+				position: google.maps.ControlPosition.TOP_CENTER,
+				drawingModes: ['marker']
+			},
+			circleOptions: {
+				fillColor: '#fff00',
+				fillOpacity: 1,
+				strokeweight: 5,
+				clickable: false,
+				editable: true,
+				zIndex: 1
+			}
+		});
+
+		drawingManager.setMap(map);
+	
+		// Create an array of alphabetical characters used to label the markers.
+	        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+	        // Add some markers to the map.
+	        // Note: The code uses the JavaScript Array.prototype.map() method to
+	        // create an array of markers based on a given "locations" array.
+	        // The map() method here has nothing to do with the Google Maps API.
+	        var markers = locations.map(function(location, i) {
+        		return new google.maps.Marker({
+        			position: location,
+				label: labels[i % labels.length]
+			});
+		});
+	
+		var marker = new google.maps.Marker({
+			position:{
+				lat: 0.0,
+				lng: 0.0
+			},
+			map: map,
+			title: 'click',
+			draggable: true
+		});
+
+
+		google.maps.event.addListener(marker,'click', function(){
+			infoWindow.open(map, marker);
+		});
+
+		var infoWindow = new google.maps.InfoWindow({
+			content: "this is <b> marker info</b> lat: lng:"
+		});
+	
+		
+		// Add a marker clusterer to manage the markers.
+	//	var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+	}
+	</script>
+   	<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    	</script>
+    	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_O-DWv_X7RsiS9oQuqAeNCrwpJPcgrDM&signed_in=false&libraries=drawing&callback=initMap"></script> 
+	</div>
+
+<center>
+<p id="history"></p>
+</center>
+
+</body>
+</html>

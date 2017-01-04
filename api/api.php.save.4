@@ -210,47 +210,47 @@ session_start();
 			$map = $_REQUEST['var1'];
 			$id = $_SESSION['id'];
 			$sql = "SELECT * FROM `history` WHERE id = '$id' AND pmap = '$map'";
-			$result = mysql_query($sql);
-			if($rows = mysql_num_rows($result) > 0){
-				echo "<table border = '1'>
-				<tr>
-				<th> Identification </th>
-				<th> Map </th>
-				<th> Date </th>
-				<th> Event </th>
-				</tr>";
-				while($fetch = mysql_fetch_array($result)){
-					echo "<tr>";
-					echo "<td>" . $fetch['id'] . "</td>";
-					echo "<td>" . $fetch['pmap'] . "</td>";
-					echo "<td>" . $fetch['date'] . "</td>";
-					echo "<td>" . $fetch['event'] . "</td>";
+			$query = mysql_query($sql);
+			$sqldouble = "SELECT * FROM `history` WHERE id = '$id'";
+			$querydouble = mysql_query($sqldouble);
+			if(isset(query)){
+				if($rows = mysql_num_rows($query) > 0){
+					echo "<table border = '1'>
+					<tr>
+					<th> Identification </th>
+					<th> Map </th>
+					<th> Date </th>
+					<th> Event </th>
+					</tr>";
+					while($fetch = mysql_fetch_array($rows)){
+						echo "<tr>";
+						echo "<td>" . $fetch['id'] . "</td>";
+						echo "<td>" . $fetch['pmap'] . "</td>";
+						echo "<td>" . $fetch['date'] . "</td>";
+						echo "<td>" . $fetch['event'] . "</td>";
+					}
+					echo "</table>";
+			}else if(!isset($query) && isset($querydouble)){
+				if($rows = mysql_num_rows($querydouble) > 0){
+					echo "<table border = '1'>
+                       	                <tr>
+                               	        <th> Identification </th>
+                               		<th> Map </th>
+                                       	<th> Date </th>
+                                       	<th> Event </th>
+                                       	</tr>";
+                                       	while($fetch = mysql_fetch_array($rows)){
+                                               	echo "<tr>";
+                                               	echo "<td>" . $fetch['id'] . "</td>";
+                                               	echo "<td>" . $fetch['pmap'] . "</td>";
+                                               	echo "<td>" . $fetch['date'] . "</td>";
+                                               	echo "<td>" . $fetch['event'] . "</td>";
+                                       	}
+                                       	echo "</table>";
 				}
-				echo "</table>";
+			}else{
+				echo "Nothing returned";
 			}
-		}
-
-		private function getAllMapHistory(){
-			$id = $_SESSION['id'];
-			$sql = "SELECT * FROM `history` WHERE id='$id'";
-			$result = mysql_query($sql);
-			if($rows = mysql_num_rows($result) > 0){
-                       	        echo "<table border = '1'>
-                         	<tr>
-                              	<th> Identification </th>
-                               	<th> Map </th>
-                               	<th> Date </th>
-                               	<th> Event </th>
-                               	</tr>";
-                               	while($fetch = mysql_fetch_array($result)){
-                                       	echo "<tr>";
-                                       	echo "<td>" . $fetch['id'] . "</td>";
-                                       	echo "<td>" . $fetch['pmap'] . "</td>";
-                                       	echo "<td>" . $fetch['date'] . "</td>";
-                                       	echo "<td>" . $fetch['event'] . "</td>";
-                               	}
-                               	echo "</table>";
-                        }
 		}
 
 		private	function getAll(){
@@ -305,21 +305,19 @@ session_start();
 			$query = mysql_query($control);
 		
 			if(isset($map) && isset($x) && isset($y) && isset($query)){
-
 				$newmap = "SELECT * FROM `personalmaps` WHERE name = '$map'";
 				$newmapquery = mysql_query($newmap);
-				if(isset($newmapquery) == false){
+				if(!isset($newmapquery)){
 					$newhistorymap = "INSERT INTO `history`(`id`, `pmap`, `date`, `event`) VALUES ('$id', '$map', localtimestamp(), '$map has been created.')";
 					$newmapquery = mysql_query($newhistorymap);
 				}
-
+				$ifirst = "INSERT INTO `maps`(`longitude`,`latitude`) VALUES ('$x','$y')";
+				$sqlone = mysql_query($ifirst);
+				
 				$isecond = "INSERT INTO `personalmaps`(`id`,`name`,`longitude`,`latitude`) VALUES ('$id', '$map','$x','$y')"; 
 				$sqltwo = mysql_query($isecond);
 
-				$ifirst = "INSERT INTO `maps`(`longitude`,`latitude`) VALUES ('$x','$y')";
-                                $sqlone = mysql_query($ifirst);
-
-				$newhistoryupdate = "INSERT INTO `history`(`id`,`pmap`,`date`,`event`) VALUES ('$id','$map', localtimestamp(), '$map has been updated with latitude: $x and longitude: $y')";
+				$newhistoryupdate = "INSERT INTO `history`(`id`,`pmap`,`date`,`event`) VALUES ('$id','$map', localtimestamp(), '$map has been updated with x: $x and y: $y')";
 				$newupdatequery = mysql_query($newhistoryupdate);
 
 				if(isset($sqlone) && isset($sqltwo)){
