@@ -167,49 +167,35 @@ session_start();
 		}
 
 		private function googleLogin(){
-
-			require_once '../../../../vendor/autoload.php';
-
 			$username = $_REQUEST['var1'];
 			$token = $_REQUEST['var2'];
-
-			$client = new Google_Client(['client_id']);
-			$payload = $client->verifyIdToken($token);
-			if ($payload) {
-		  		$userid = $payload['sub'];
-				// If request specified a G Suite domain:
-				//$domain = $payload['hd'];
-			} else {
-				exit;
-				// Invalid ID token
-			}
-			if(!empty($username) && !empty($userid)){
-				$userid = md5($userid);
-				$token = md5($token);
-				$sql = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND password = '$userid'", $this->db);
-				if($row = mysql_num_rows($sql) == 1){
-							$result = mysql_fetch_array($sql,MYSQL_ASSOC);
-							$_SESSION['id'] = $result['id'];
-							$id = $_SESSION['id'];
-							// If success everythig is good send header as "OK" and user details
-							echo json_encode("Successful login for user : " . $result['username'] . ", welcome.");
-							//exit
-					}
-				else{
-					$sql = mysql_query("INSERT INTO `logins`(`username`,`password`,`token`) VALUES ('$username','$userid','$token')",$this->db);
-					$sql2 = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND token = '$token' AND password = '$userid'", $this->db);
-					if($row = mysql_num_rows($sql2) == 1){
-						$result = mysql_fetch_array($sql2,MYSQL_ASSOC);
+			$token = md5($token);
+		
+			$sql = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
+			if($row = mysql_num_rows($sql) == 1){
+						$result = mysql_fetch_array($sql,MYSQL_ASSOC);
 						$_SESSION['id'] = $result['id'];
+						$id = $_SESSION['id'];
 						// If success everythig is good send header as "OK" and user details
-						echo json_encode("Successful register for user : " . $result['username'] . "!");
+						echo json_encode("Successful login for user : " . $result['username'] . ", welcome.");
 						//exit;
-					}
-	
+					
 				}
-			}
 			else{
-				exit;
+				if($sql && mysql_num_rows($res)>0){
+					$this->response("Username allready taken", 204);
+				}
+				
+				$sql = mysql_query("INSERT INTO `logins`(`username`,`password`,`token`) VALUES ('$username','$password','$token')",$this->db);
+				$sql2 = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND password = '$password'", $this->db);
+				if($row = mysql_num_rows($sql2) == 1){
+					$result = mysql_fetch_array($sql2,MYSQL_ASSOC);
+					$_SESSION['id'] = $result['id'];
+					// If success everythig is good send header as "OK" and user details
+					echo json_encode("Successful register for user : " . $result['username'] . "! <br/> You can now login.");
+					//exit;
+				}
+
 			}
 		}
 		

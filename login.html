@@ -73,16 +73,29 @@ w3IncludeHTML();
       function onSignIn(googleUser){
         // Useful data for your client-side scripts:
         var profile = googleUser.getBasicProfile();
-        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-        console.log('Full Name: ' + profile.getName());
-        console.log('Given Name: ' + profile.getGivenName());
-        console.log('Family Name: ' + profile.getFamilyName());
-        console.log("Image URL: " + profile.getImageUrl());
-        console.log("Email: " + profile.getEmail());
+        var name = profile.getGivenName();
 
         // The ID token you need to pass to your backend:
         var id_token = googleUser.getAuthResponse().id_token;
-        console.log("ID Token: " + id_token);
+	var xhttpG = new XMLHttpRequest();
+	xhttpG.onreadystatechange = function(){
+			if(xhttpG.readyState == 4 && xhttpG.status == 200){ //Can also check this.status == 500 if website is http:
+				console.log("Everything ready and sending info.");
+				var foo  = xhttpG.responseText;
+				testMethod(foo);
+			}
+			console.log("readyState : " + xhttpG.readyState);
+			console.log("stats : " + xhttpG.status);
+		}
+		console.log("api/login/"+username+"/"+password);
+		console.log("ready state: "+xhttpG.readyState);
+		console.log("status: "+xhttpG.status);
+		if(username && password){
+			xhttpG.open("POST", "api/googleLogin/"+name+"/"+id_token, true);
+			xhttpG.send(null);
+		}else{
+			document.getElementById("response").innerHTML = "It takes two values to login";
+		}
       };
     </script>
     	</center>
