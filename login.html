@@ -42,7 +42,36 @@
 		}else{
 			document.getElementById("response").innerHTML = "It takes two values to login";
 		}
-	} 
+	}
+
+	
+      function onSignIn(googleUser){
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+        var name = profile.getGivenName();
+        // The ID token you need to pass to your backend:
+        var id_token = googleUser.getAuthResponse().id_token;
+	var xhttpG = new XMLHttpRequest();
+	xhttpG.onreadystatechange = function(){
+			if(xhttpG.readyState == 4 && xhttpG.status == 200){ //Can also check this.status == 500 if website is http:
+				console.log("Everything ready and sending info.");
+				var foo  = xhttpG.responseText;
+				testMethod(foo);
+			}
+			console.log("readyState : " + xhttpG.readyState);
+			console.log("stats : " + xhttpG.status);
+		}
+		console.log("api/login/"+username+"/"+password);
+		console.log("ready state: "+xhttpG.readyState);
+		console.log("status: "+xhttpG.status);
+		if(username && password){
+			xhttpG.open("POST", "api/googleLogin/"+name+"/"+id_token, true);
+			xhttpG.send(null);
+		}else{
+			document.getElementById("response").innerHTML = "It takes two values to login";
+		}
+      }
+     
 
 	function testMethod(foo){
 		document.getElementById("response").innerHTML = foo;
@@ -69,36 +98,7 @@ w3IncludeHTML();
     		<input type="button" value="Login" onclick="login()" class="btn btn-success btn-lg" >
     	</form>
 	<div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
-    <script>
-      function onSignIn(googleUser){
-        // Useful data for your client-side scripts:
-        var profile = googleUser.getBasicProfile();
-        var name = profile.getGivenName();
-
-        // The ID token you need to pass to your backend:
-        var id_token = googleUser.getAuthResponse().id_token;
-	var xhttpG = new XMLHttpRequest();
-	xhttpG.onreadystatechange = function(){
-			if(xhttpG.readyState == 4 && xhttpG.status == 200){ //Can also check this.status == 500 if website is http:
-				console.log("Everything ready and sending info.");
-				var foo  = xhttpG.responseText;
-				testMethod(foo);
-			}
-			console.log("readyState : " + xhttpG.readyState);
-			console.log("stats : " + xhttpG.status);
-		}
-		console.log("api/login/"+username+"/"+password);
-		console.log("ready state: "+xhttpG.readyState);
-		console.log("status: "+xhttpG.status);
-		if(username && password){
-			xhttpG.open("POST", "api/googleLogin/"+name+"/"+id_token, true);
-			xhttpG.send(null);
-		}else{
-			document.getElementById("response").innerHTML = "It takes two values to login";
-		}
-      };
-    </script>
-    	</center>
+       	</center>
 
 	<div class="response" id = "response">
 

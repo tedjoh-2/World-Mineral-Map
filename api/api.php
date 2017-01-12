@@ -188,6 +188,7 @@ session_start();
 				$token = md5($token);
 				$sql = mysql_query("SELECT * FROM `logins` WHERE username = '$username' AND password = '$userid'", $this->db);
 				if($row = mysql_num_rows($sql) == 1){
+							$sqlInsert = mysql_query("UPDATE logins SET token = `$token` WHERE username = '$username' AND password = '$userid'", $this->db);
 							$result = mysql_fetch_array($sql,MYSQL_ASSOC);
 							$_SESSION['id'] = $result['id'];
 							$id = $_SESSION['id'];

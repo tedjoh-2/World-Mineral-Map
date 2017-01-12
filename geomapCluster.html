@@ -51,7 +51,7 @@
      </form>
     </center>
 
-	<input id="pac-input" class="controls" placeholder="Search box">
+	<! -- input id="pac-input" class="controls" placeholder="Search box" -->
 		<div class="map" id="map">
 		<center>
 
@@ -223,7 +223,8 @@
 			return marker;
 		});
 
-	        var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+	        var markerCluster = new MarkerClusterer(map, markers,
+{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 	}	
 	    
 	function initMap() {
@@ -235,7 +236,7 @@
         		zoom: 3,
 	        	center: {lat: 0.0, lng: 0.0}
 	        });
-	
+	/*
 		var input = document.getElementById("pac-input");
                 var searchBox = new google.maps.places.SearchBox(input);
                 map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -285,11 +286,43 @@
 			});
 			map.fitBounds(bounds);
 		});
-		
+	*/
+	 	var infowindow = new google.maps.InfoWindow();
+
+                google.maps.event.addListener(map, 'click', function(e){
+                        var marker = new google.maps.Marker({
+                                position: e.latLng,
+                                map: map
+                        });
+                        infowindow.setContent(e.latLng.toString());
+                        infowindow.open(map, marker);
+
+                        marker.addListener('click', function(e){
+                                infowindow.setContent(e.latLng.toString());
+                                infowindow.open(map, marker);
+                        });
+                });
+
+                var labels = 'ABCDEFGHIJKLMNOPQRSTUVXYÅÄÖ';
+
+                var markers = locations.map(function(location, i){
+                        var marker = new google.maps.Marker({
+                                position: location,
+                                label: labels[ i % labels.length],
+                                title: 'click'
+                        });
+                        marker.addListener('click', function(e){
+                                infowindow.setContent(e.latLng.toString());
+                                infowindow.open(map, marker);
+                        });
+       			return marker;
+                });
+             var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+   
 	}
 		
 		</script>
-		<input id="pac-inputt" class="controls" placeholder="Search Box after update">
+	//	input id="pac-inputt" class="controls" placeholder="Search Box after update">
 		</div>
 
 			<center>
