@@ -40,10 +40,10 @@
        <input type="text" id ="mapname" name="mapname" class="form-control form-control-lg" placeholder="Map name">
       </div>
       <div class="form-group">
-       <input type="text" id ="x" name="x" class="form-control form-control-lg" placeholder="Longitude">
+       <input type="text" id ="y" name="y" class="form-control form-control-lg" placeholder="Latitude (y)">
       </div>
       <div class="form-group">
-       <input type="text" id="y" name="y"class="form-control form-control-lg" placeholder="Latitude">
+       <input type="text" id="x" name="x"class="form-control form-control-lg" placeholder="Longitude (x)">
       </div>
       <br/>
       <input type="button" name="submit" value="Action" onclick="clickMe();" class="btn btn-success btn-lg">
@@ -93,6 +93,7 @@
 		request.onreadystatechange = function(){
 			if(request.readyState == 4 && request.status == 200){
 				var response = request.responseText;
+				//console.log(response);
 				updateMap(response);
         		}
 		}
@@ -131,7 +132,7 @@
 				lng: lng
 			});
 		});
-
+		//console.log(locations);
 		var map = new google.maps.Map(document.getElementById("map"), {
         		zoom: 2,
         		center: {lat: 0.0, lng: 0.0}
@@ -160,7 +161,7 @@
                         locations.forEach(function(marker){
                         	marker.setMap(null);
                         });
-			locations = [];
+			locations = [{-37.94042, 144.90515}];
 
                         var bounds = new google.maps.LatLngBounds();
                         places.forEach(function (place){
@@ -203,7 +204,7 @@
 			infowindow.open(map, marker);
 
 			marker.addListener('click', function(e){
-				infowindow.setContent(e.latLng.toString());
+				infowindow.setContent(e.latLng.toString()); // (y,x)
 				infowindow.open(map, marker);
 			});
 		});
