@@ -51,7 +51,7 @@
      </form>
     </center>
 
-	<! -- input id="pac-input" class="controls" placeholder="Search box" -->
+	//-- input id="pac-input" class="controls" placeholder="Search box" -->
 		<div class="map" id="map">
 		<center>
 
@@ -75,16 +75,6 @@
 
         function clickMe(){
 
-/*
-	TODO if time. 
-	: SEARCHBAR - prio
-	: Infowidow on markers when click event - mid prio
-	: Info button that explains the map (Info). - low prio
-	extra --- 
-	: ADD FEATURE TO MAP WITH MARKER REMOVAL.
-	: OUTZOOMABLE AFTER UPDATE.
-	: GIVE HISTORY A NEW GUI, POSSIBLY SCROLL BAR + nicer gui.
-*/
                	var one = document.getElementById("mapname").value;
 		var two = document.getElementById("x").value;
 		var three = document.getElementById("y").value;
@@ -93,7 +83,6 @@
 		request.onreadystatechange = function(){
 			if(request.readyState == 4 && request.status == 200){
 				var response = request.responseText;
-				//console.log(response);
 				updateMap(response);
         		}
 		}
@@ -114,7 +103,6 @@
 
 		var array = new Array();
 		array = JSON.parse(response);
-//		console.log(array);
 
 //	-	response = response.replace(/"/g,"");
 //		response = response.replace(/},{/g,"}{");
@@ -132,7 +120,6 @@
 				lng: lng
 			});
 		});
-		//console.log(locations);
 		var map = new google.maps.Map(document.getElementById("map"), {
         		zoom: 2,
         		center: {lat: 0.0, lng: 0.0}
@@ -161,7 +148,7 @@
                         locations.forEach(function(marker){
                         	marker.setMap(null);
                         });
-			locations = [{-37.94042, 144.90515}];
+			locations = [];
 
                         var bounds = new google.maps.LatLngBounds();
                         places.forEach(function (place){
