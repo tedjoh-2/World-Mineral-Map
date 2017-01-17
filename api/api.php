@@ -168,7 +168,7 @@ session_start();
 
 		private function googleLogin(){
 
-			require_once '../../../../vendor/autoload.php';
+			require_once '../vendor/autoload.php';
 
 			$username = $_REQUEST['var1'];
 			$token = $_REQUEST['var2'];

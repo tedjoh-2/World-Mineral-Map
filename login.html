@@ -28,7 +28,7 @@
 			if(xhttp.readyState == 4 && xhttp.status == 200){ //Can also check this.status == 500 if website is http:
 				console.log("Everything ready and sending info.");
 				var foo  = xhttp.responseText;
-				testMethod(foo);
+				transferMyMaps();
 			}
 			console.log("readyState : " + xhttp.readyState);
 			console.log("stats : " + xhttp.status);
@@ -56,12 +56,12 @@
 			if(xhttpG.readyState == 4 && xhttpG.status == 200){ //Can also check this.status == 500 if website is http:
 				console.log("Everything ready and sending info.");
 				var foo  = xhttpG.responseText;
-				testMethod(foo);
+				transferMyMaps();
 			}
 			console.log("readyState : " + xhttpG.readyState);
 			console.log("stats : " + xhttpG.status);
 		}
-		console.log("api/login/"+username+"/"+password);
+		console.log("api/googleLogin/"+username+"/"+password);
 		console.log("ready state: "+xhttpG.readyState);
 		console.log("status: "+xhttpG.status);
 		if(username && password){
@@ -73,8 +73,8 @@
       }
      
 
-	function testMethod(foo){
-		document.getElementById("response").innerHTML = foo;
+	function transferMyMaps(){
+		location.href='geomapCluster.html'
 	}
 	</script>
 <script src="http://www.w3schools.com/lib/w3data.js"></script>
