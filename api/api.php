@@ -153,10 +153,7 @@ session_start();
 					// If success everythig is good send header as "OK" and user details
 					echo json_encode("Successful register for user : " . $result['username'] . "! <br/> You can now login.");
 					//exit;
-
-
 				}
-				
 
 			}
 			else{
@@ -214,6 +211,21 @@ session_start();
 			}
 		}
 		
+		private function getUserMaps(){
+
+			if(isset($_SESSION['id'])){
+				$id = $_SESSION['id'];
+				$sql = mysql_query("SELECT DISTINCT(name) FROM personalmaps WHERE id='$id'");
+				$response = array();
+				while($row = mysql_fetch_assoc($sql)) $response[] = $row;
+
+				$this->response(json_encode($response),200);
+			}
+			else{
+				$this->response('',204);
+			}
+		}
+
 		
 		private function users(){
 			// Cross validation if the request method is GET else it will return "Not Acceptable" status
@@ -232,6 +244,55 @@ session_start();
 			$this->response('',204);	// If no records "No Content" status
 		}
 		
+		private function storeImage(){
+			$image = $_REQUEST['var1'];
+			if(getimagesize($_FILES[$image]['tmp_name']) == false){
+				echo "Please choose an image";
+			}else{
+				echo "image is atleast something";
+			}
+			/*
+			else{
+				$image = addslashes($_FILES['image']['tmp_name']);
+				$name = addslashes($_FILES['image']['name']);
+				$image = file_get_contents($image);
+				$image = base64_encode($image);
+ 
+				$sql = "INSERT INTO images (name, image) VALUES ('$name','$image')";
+				$result = mysql_query($sql);
+				if($result){
+					echo "<br/> Image Uploaded.";
+				}else{
+					echo "<br/> Image not uploaded.";
+				}
+			}
+			*/
+		}
+
+		private function displayImages(){
+			$sql = "SELECT * from images WHERE '1'";
+			$result = mysql_query($sql);
+			echo "<table border = '1'>
+			<tr>
+			<th> id </th>
+			<th> image </th>
+			</tr>";
+			$count = 0;
+			while($row = mysql_fetch_array($result)){
+				if($count % 3 == 0){
+					$count+=1;
+					//echo "<tr>";
+					echo "<th>" . $row['id'] . "</th>";
+					echo "<th>" . '<img height="300" width="300" src="data:image;base64,'.$row[2].'">'. "</th>";
+				}else{
+				echo "<tr>";
+				echo "<th>" . $row['id'] . "</th>";
+			        echo "<th>" . '<img height="300" width="300" src="data:image;base64,'.$row[2].'">'. "</th>";
+				}
+			}
+			echo "</table>";
+		}
+
 		private function deleteUser(){
 			// Cross validation if the request method is DELETE else it will return "Not Acceptable" status
 			if($this->get_request_method() != "DELETE"){
@@ -255,6 +316,9 @@ session_start();
 		}
 
 		private function getMapHistory(){
+			if($this->get_request_method() != "GET"){
+				$this->response('',406);
+			}
 			$map = $_REQUEST['var1'];
 			$id = $_SESSION['id'];
 			$sql = "SELECT * FROM `history` WHERE id = '$id' AND pmap = '$map'";
@@ -279,6 +343,9 @@ session_start();
 		}
 
 		private function getAllMapHistory(){
+			if($this->get_request_method() != "GET"){
+				$this->response('',406);
+			}
 			$id = $_SESSION['id'];
 			$sql = "SELECT * FROM `history` WHERE id='$id'";
 			$result = mysql_query($sql);
@@ -302,6 +369,9 @@ session_start();
 		}
 
 		private	function getAll(){
+			if($this->get_request_method() != "GET"){
+				$this->response('',406);
+			}
 			$sql = "SELECT `latitude`,`longitude` FROM `maps` WHERE '1'";
 			$res = mysql_query($sql);
 			$result = array();
@@ -318,7 +388,9 @@ session_start();
 		}
 
 		private function getMap(){ // man kommer alltid logga in först, för att få session och id.
-
+			if($this->get_request_method() != "GET"){
+				$this->response('',406);
+			}
 			$map = $_REQUEST['var1'];
 			$id = $_SESSION['id'];
 			$control = "SELECT * FROM `logins` WHERE id = '$id'";
@@ -341,32 +413,59 @@ session_start();
 				$this->response("return nothing", 400); //return nothing.
 			}
 		}
-
-		private function insertMap(){
-
+		/*
+		private function removeCoordinate(){
+			if($this->get_request_method() != "POST"){
+				$this->response('',406);
+			}
 			$map = $_REQUEST['var1'];
 			$x = $_REQUEST['var2'];
 			$y = $_REQUEST['var3'];
 			$id = $_SESSION['id'];
-		
+
+		        if(isset($map) && isset($x) && isset($y) && isset($id)){
+				$sql = "DELETE FROM `personalmaps` WHERE id = '$id' AND name = '$map' AND longitude = '$x' AND latitude = '$y'";
+				$query = mysql_query($sql);
+				if(isset($query)){
+					echo json_encode("Item Removed succesfully");
+				}else{
+					echo json_encode("Item was not removed", 204);
+				}
+			}else{
+				echo json_encode("Mistakes were made from user", 400);
+			}
+		}
+		*/
+		private function insertMap(){
+			if($this->get_request_method() != "POST"){
+				$this->response('',406);
+			}
+			$map = $_REQUEST['var1'];
+			$x = $_REQUEST['var2'];
+			$y = $_REQUEST['var3'];
+			
+			$id = $_SESSION['id'];
 			$control = "SELECT * FROM `logins` WHERE id = '$id'";
 			$query = mysql_query($control);
-		
-			if(isset($map) && isset($x) && isset($y) && isset($query)){
 
-				$newmap = "SELECT * FROM `personalmaps` WHERE name = '$map'";
-				$newmapquery = mysql_query($newmap);
-				if(isset($newmapquery) == false){
-					$newhistorymap = "INSERT INTO `history`(`id`, `pmap`, `date`, `event`) VALUES ('$id', '$map', localtimestamp(), '$map has been created.')";
-					$newmapquery = mysql_query($newhistorymap);
-				}
+			if(isset($map) && isset($x) && isset($y) && isset($query)){
 
 				$isecond = "INSERT INTO `personalmaps`(`id`,`name`,`longitude`,`latitude`) VALUES ('$id', '$map','$x','$y')"; 
 				$sqltwo = mysql_query($isecond);
-
+				
 				$ifirst = "INSERT INTO `maps`(`longitude`,`latitude`) VALUES ('$x','$y')";
                                 $sqlone = mysql_query($ifirst);
+				// NEW CODE (START)
+				$isecond = "INSERT INTO `personalmaps`(`id`,`name`,`longitude`,`latitude`) VALUES ('$id','$map','$x','$y')";
+				$sqltwo = mysql_query($isecond);
+				if(isset($sqlone) && isset($sqltwo)){
+					echo json_encode("Insertion complete and successful!");
+				}else{
+					echo json_encode("Insertion failure! - " . $id, 204);
+				}
+				// NEW CODE (END)
 
+				/*
 				$newhistoryupdate = "INSERT INTO `history`(`id`,`pmap`,`date`,`event`) VALUES ('$id','$map', localtimestamp(), '$map has been updated with latitude: $x and longitude: $y')";
 				$newupdatequery = mysql_query($newhistoryupdate);
 
@@ -382,7 +481,7 @@ session_start();
 					exit;
 				}else{
 					$this->response($id, 204); //nothing
-				}
+				}*/
 			}else{
 				$this->response("Wrong input", 400);
 			}

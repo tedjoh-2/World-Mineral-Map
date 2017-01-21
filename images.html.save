@@ -1,0 +1,72 @@
+<html>
+<head>
+    <meta content = "text/html;charset=utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    
+    <link 
+	rel="stylesheet" 
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" 
+	integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" 
+	crossorigin="anonymous">
+    <link 
+	rel = "stylesheet" 
+	type = "text/css" 
+	href = "css.css">
+    <script src="http://www.w3schools.com/lib/w3data.js"></script>
+	<title> Upload a picture! </title>
+</head>
+
+<body>
+<div w3-include-html="overhead.html"></div>
+<script>
+w3IncludeHTML();
+</script>
+
+	<center>
+	<style>
+		   div.scroll{
+                        background-color: #FFFFFF;
+                        overflow: scroll;
+                }
+        </style>
+<div class="container" id = "form">
+	<center>
+	<form class="form-inline" enctype="multipart/form-data"  method="POST" id="uploadimage">
+		<br/>
+		<input type="file" id="file" name="file" class="btn btn-success btn-lg" multiple/>
+		<br/><br/>
+		<input type="button" onclick="storeImage();" id="upload" name="submit" value="Upload" class="btn btn-success btn-lg">
+	</form>
+	</center>
+	<div class = "scroll">
+        	<p id="history"></p>
+		<script>
+			function displayPictures(){
+				var request = new XMLHttpRequest();
+				request.onreadystatechange = function(){
+					if(request.readyState == 4 && request.status == 200){
+						document.getElementById("history").innerHTML = request.responseText;
+					}
+				}
+				request.open("GET","/api/displayImages/", true);
+				request.send(null);
+			}
+			function storeImage(){
+				var inputFile = document.getElementById("file");
+				console.log(inputFile + "inputfile");
+				var request = new XMLHttpRequest();
+				request.onreadystatechange = function(){
+					if(request.readyState == 4 && request.status == 200){
+						displayPictures();
+					}
+				}
+				request.open("POST","/api/storeImage/"+inputFile, true);
+				request.send(null);
+				if(        echo "<td>" . '<img height="300" width="300" src="data:image;base64,'.$row[2].'">'. "</td>";
+			}
+		</script>
+	</div>
+</div>
+</body>
+</html>
+

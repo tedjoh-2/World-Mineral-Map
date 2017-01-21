@@ -6,10 +6,7 @@
     <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta name = "google-signin-client_id" content = "902483045322-ame66rsf4mu0cklmgavrh4d2u5dr57f9.apps.googleusercontent.com">
 
-    <link rel="stylesheet" 
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" 
-	integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" 
-	crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <link rel = "stylesheet" 
 	type = "text/css" 
@@ -21,6 +18,79 @@
     <script async defer 
 	type = "text/javascript" 
 	src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyB_O-DWv_X7RsiS9oQuqAeNCrwpJPcgrDM&libraries=places&callback=initMap">
+    </script>
+
+
+        <script type="text/javascript">
+    	function userMaps(){
+		var opt;
+		var opt2;
+		var optForm;
+		var optForm2;
+    		var xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function(){
+			if(xhttp.readyState == 4 && xhttp.status == 200){ //Can also check this.status == 500 if website is http:
+//				console.log("Everything ready and sending info.");
+				var foo = JSON.parse(xhttp.responseText);
+				optForm = document.getElementById("dropMyMaps");
+				optForm2 = document.getElementById("dropMyMaps2");				
+				for (var i = 0; i < Object.keys(foo).length; i++){
+					opt = document.createElement("option");
+					opt2 = document.createElement("option");
+					
+					opt.textContent = foo[i].name;
+					opt2.textContent = foo[i].name;
+					optForm.appendChild(opt); //Needs specific append to index i.
+					optForm2.appendChild(opt2);
+				}
+				
+			}
+//			console.log("readyState : " + xhttp.readyState);
+//			console.log("stats : " + xhttp.status);
+		}
+//		console.log("api/getUserMaps/");
+//		console.log("ready state: "+xhttp.readyState);
+//		console.log("status: "+xhttp.status);
+		xhttp.open("GET", "api/getUserMaps/", true);
+		xhttp.send(null);
+	}
+
+	function loadMap(){
+	        var sel = document.getElementById("dropMyMaps");
+	        var value = sel.options[sel.selectedIndex].text;
+
+		var xmlRe = new XMLHttpRequest();
+		xmlRe.onreadystatechange = function(){
+			if(xmlRe.readyState == 4 && xmlRe.status == 200){
+				var dis = xmlRe.responseText;
+				updateMap(dis);
+        		}
+		}
+		if(value !=''){
+			xmlRe.open("GET", "/api/getMap/"+value, true);
+			xmlRe.send(null);
+		}else{
+			xmlRe.open("GET","/api/getAll/", true);
+			xmlRe.send(null);
+		}
+	}
+
+	function clickMe(){
+	        var one = document.getElementById("mapname").value;
+		var two = document.getElementById("x").value;
+		var three = document.getElementById("y").value;
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			if(request.readyState == 4 && request.status == 200){
+				var response = request.responseText;
+				updateMap(response);
+	       		}
+		}
+		
+		request.open("POST","/api/insertMap/"+one+"/"+two+"/"+three, true);
+		request.send(null);
+	}
+
     </script>
 
   </head>
@@ -35,76 +105,151 @@
  <div class="container">
    <h1><center>Welcome to your personal map handler.</center></h1>
     <center>
-     <form class="form-inline">
-      <div class="form-group">
-       <input type="text" id ="mapname" name="mapname" class="form-control form-control-lg" placeholder="Map name">
+ 
+<div class="form-group">
+      <label class="control-label col-sm-offset-2 col-sm-2" for="company">Your maps</label>
+      <div class="col-sm-6 col-md-4">
+        <select id="dropMyMaps" class="form-control">
+		<option></option>
+		<script>
+		userMaps();
+		</script>
+        </select> 
       </div>
-      <div class="form-group">
-       <input type="text" id ="y" name="y" class="form-control form-control-lg" placeholder="Latitude (y)">
+      <input type="button" name="submit" value="Load map" onclick="loadMap();" class="btn btn-success btn-lg">
+    </div>
+ 
+     <div class="form-group">
+      <label class="control-label col-sm-offset-2 col-sm-2" for="company"> Upload marker</label>
+      <div class="col-sm-6 col-md-4">
+        <select id="dropMyMaps2" class="form-control">
+		<option></option>
+          <script type="text/javascript">
+          	//userMaps(); //Not needed.
+          </script>
+        </select>
+
+       <input type="text" id="newName" name="newName"class="form-control form-control-lg" placeholder="New map">
+      
       </div>
-      <div class="form-group">
-       <input type="text" id="x" name="x"class="form-control form-control-lg" placeholder="Longitude (x)">
-      </div>
-      <br/>
-      <input type="button" name="submit" value="Action" onclick="clickMe();" class="btn btn-success btn-lg">
-      <input type="button" name="submit" value="History" onclick="history();" class="btn btn-success btn-lg">
-     </form>
+      <!-- input type="button" name="submit" value="Upload" onclick="clickMe();" class="btn btn-success btn-lg" -->	
+      <input type="button" style="display:none;" name="insert" id="insert" value="Insert?" onclick="insertNode();" class="btn btn-success btn-lg">
+    </div>
     </center>
+     <br>
 
 	<!-- input id="pac-input" class="controls" placeholder="Search box" -->
 		<div class="map" id="map">
 		<center>
+<script>
 
-		<script>
-	function history(){
-		var one = document.getElementById("mapname").value;
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function(){
-			if(request.readyState == 4 && request.status == 200){
-				document.getElementById("history").innerHTML = request.responseText;
-			}
+	var mapCoordinates = new Array();
+	
+	function insertIntoArray(coordinates){
+		if(mapCoordinates.length > 0){
+			console.log("size was not zero, hard reset");
+			mapCoordinates.length = 0;
 		}
-		if(one){
-			request.open("GET", "/api/getMapHistory/"+one, true);
-			request.send(null);
-		}else{
-			request.open("GET", "/api/getAllMapHistory/", true);
-			request.send(null);
-		}
+		
+		var latLng = coordinates;
+                latLng = latLng.replace(/[() ]/g, '');
+		var split = latLng.split(",");
+		var lat = split[0];
+		var lng = split[1];
+		mapCoordinates.push(lat);
+		mapCoordinates.push(lng);	
+		mapCoordinates.forEach(function(arr){
+			console.log(arr + " - mapCoordinates");
+		});
+		document.getElementById("insert").style.display = "block";
+		document.getElementById("insert").value = "Insert?";
+		document.getElementById("insert").style.backgroundColor = "blue";
 	}
-
-        function clickMe(){
-
-               	var one = document.getElementById("mapname").value;
-		var two = document.getElementById("x").value;
-		var three = document.getElementById("y").value;
-
+	/*
+	function removeNode(coordinates){
+		var latLng = coordinates;
+		var split = latLng.split(",");
+		var lat = split[0];
+		var lng = split[1];
+		var sel = document.getElementById("dropMyMaps2");
+		var input = document.getElementById("newName").value;			
+		var map;
+		if(sel != null){
+			map = sel.options[sel.selectedIndex].text;
+		}else if(sel == null && input != null){
+			map = input;
+		}else{
+			alert("No maps");
+		}
+		console.log(lat + " - lat, " + lng + " - lng ");
+	
+		// ------ Ajax request to database (START) --------------
 		var request = new XMLHttpRequest();
-		request.onreadystatechange = function(){
+		request.onreadystatechange = function (){
 			if(request.readyState == 4 && request.status == 200){
 				var response = request.responseText;
-				updateMap(response);
-        		}
+				document.getElementById("insert").value = "Removed";
+				document.getElementById("insert").style.backgroundColor = "red";
+				console.log(response + " - worked, item removed from database");
+			}
 		}
-
-		if(one && two && three){
-			request.open("POST","/api/insertMap/"+one+"/"+two+"/"+three, true);
-			request.send(null);
-		}else if(one && !two && !three){
-			request.open("GET","/api/getMap/"+one, true);
+		// -------- Ajax request to database (END) -----------------
+		
+		if(lat && lng && map){
+			request.open("POST","/api/removeCoordinate/"+map+"/"+lng+"/"+lat, true);
 			request.send(null);
 		}else{
-			request.open("GET","/api/getAll", true);
-			request.send(null);
+			alert("Choose a map, to insert a new node!");
 		}
+	}
+	*/
+
+	function insertNode(){
+		 // ---- Ajax request to database (START) -------------
+		var lat = mapCoordinates[0];
+		var lng = mapCoordinates[1];
+		
+		var sel = document.getElementById("dropMyMaps2");
+		var newMapInput = document.getElementById("newName").value;
+		var map = sel.options[sel.selectedIndex].text;
+		if(map.length == 0){
+			console.log("sel is null");
+			map = newMapInput;
+		}		
+		console.log(map + " - map");
+		console.log(sel + " - sel " + newMapInput + " - newMapInput");
+               	var request = new XMLHttpRequest();
+               	request.onreadystatechange = function(){
+                       	if(request.readyState == 4 && request.status == 200){
+                               	var response = request.responseText;
+                               	console.log(response + " - it worked ");
+				document.getElementById("insert").style.backgroundColor = "green";
+				document.getElementById("insert").value = "Inserted!";
+				userMaps();
+                       	}else{
+                               	console.log("server not ready for request");
+                   	}
+               	}
+		
+                //----- Ajax request to database (END)-----------------
+
+                if(lat && lng && map){
+                        request.open("POST","/api/insertMap/"+map+"/"+lng+"/"+lat, true);
+                        request.send(null);
+                }
 	}
 	
 	function updateMap(response){
+	/*
+	* With the received data from the database, convert the data into an array that the map can use.
+	* Then update the map with the points.
+	*/
 
+	//-------------------Database json object converted to array of lat-lng (START) --------------
 		var array = new Array();
 		array = JSON.parse(response);
 
-//	-	response = response.replace(/"/g,"");
+//		response = response.replace(/"/g,"");
 //		response = response.replace(/},{/g,"}{");
 //		response = response.replace(/}{/g,"} {");		
 //		response = response.split(" ");
@@ -120,99 +265,69 @@
 				lng: lng
 			});
 		});
+	
 		var map = new google.maps.Map(document.getElementById("map"), {
         		zoom: 2,
         		center: {lat: 0.0, lng: 0.0}
         	});
-	/*
-		// SEARCH BOX
-		var input = document.getElementById("pac-inputt");
-		if(document.getElementById("pac-inputt") == null){
-			console.log("failed pac-inputt");
-		}
-                var searchBox = new google.maps.places.SearchBox(input);
-                map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-                map.addListener('bounds_changed', function(){
-                        searchBox.setBounds(map.getBounds());
-                });
-	
-	//	var markers = [];
-                searchBox.addListener('places_changed', function(){
-                        var places = searchBox.getPlaces();
-                
-		        if(places.length == 0){
-                                return;
-                        }
+	//-------------------------Database json object converted to array of lat-lng (END) ------------
 
-                        locations.forEach(function(marker){
-                        	marker.setMap(null);
-                        });
-			locations = [];
-
-                        var bounds = new google.maps.LatLngBounds();
-                        places.forEach(function (place){
-                                if(!place.geometry){
-                                        console.log("Returned place contains no geometry");
-                                        return;
-                                }
-                                var icon = {
-                                        url: place.icon,
-                                        size: new google.maps.Size(71,71),
-                                        origin: new google.maps.Point(0,0),
-                                        anchor: new google.maps.Point(17, 34),
-                                        scaledSize: new google.maps.Size(25,25)
-                                };
-
-                                locations.push(new google.maps.Marker({
-                                        map: map,
-                                        icon: icon,
-                                        title: place.name,
-                                        position: place.geometry.location
-                                }));
-
-                                if(place.geometry.viewport){
-                                        bounds.union(place.geometry.viewport);
-                                }else{
-                                        bounds.extend(place.geometry.location);
-                                }
-                        });
-                        map.fitBounds(bounds);
-                });
-	*/
 		var infowindow = new google.maps.InfoWindow();
+	
+		var marker;
+                google.maps.event.addListener(map, 'rightclick', function(e){
+                        if(marker != null){
+                                marker.setVisible(false);
+                                marker = null;
+                        }
+                        marker = new google.maps.Marker({
+                                position: e.latLng,
+                                map: map,
+                                label: '1',
+                                title: 'click for coordinates and rightclick to remove',
+                                visible: true
+                        });
+                        infowindow.setContent(e.latLng.toString());
+                        infowindow.open(map, marker);
 
-		google.maps.event.addListener(map, 'click', function(e){
-			var marker = new google.maps.Marker({
-				position: e.latLng,
-				map: map
-			});
-			infowindow.setContent(e.latLng.toString());
-			infowindow.open(map, marker);
+                        var coordinates = e.latLng.toString();
+                        insertIntoArray(coordinates);
 
-			marker.addListener('click', function(e){
-				infowindow.setContent(e.latLng.toString()); // (y,x)
-				infowindow.open(map, marker);
-			});
-		});
-
+                        marker.addListener('click', function(e){
+                                infowindow.setContent(e.latLng.toString());
+                                infowindow.open(map, marker);
+                        });
+                        marker.addListener('rightclick', function(e){
+                                marker.setVisible(false);
+                                document.getElementById("insert").style.display = "none";
+                                infowindow.close();
+                        });
+		}); 
+					
 		var labels = 'ABCDEFGHIJKLMNOPQRSTUVXYÅÄÖ';
-
 		var markers = locations.map(function(location, i){
 			var marker = new google.maps.Marker({
 				position: location,
 				label: labels[ i % labels.length],
-				title: 'click'
+				title: 'click for coordinates'
 			});
 			marker.addListener('click', function(e){
 				infowindow.setContent(e.latLng.toString());
 				infowindow.open(map, marker);
 			});
+			/*
+			marker.addListener('rightclick', function(e){
+				var coordinates = e.latLng.toString();
+				console.log(coordinates + " - going to be removed");
+				removeNode(coordinates);
+			});
+			*/
 			return marker;
 		});
-
+	
 	        var markerCluster = new MarkerClusterer(map, markers,
-{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+			{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 	}	
 	    
 	function initMap() {
@@ -221,10 +336,13 @@
 		var locations = [];
 	
 		var map = new google.maps.Map(document.getElementById("map"), {
-        		zoom: 3,
+        		zoom: 2,
 	        	center: {lat: 0.0, lng: 0.0}
 	        });
+	
 	/*
+	//-----------Search bar (START) -----------------------------------------------------------------
+	
 		var input = document.getElementById("pac-input");
                 var searchBox = new google.maps.places.SearchBox(input);
                 map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
@@ -274,25 +392,43 @@
 			});
 			map.fitBounds(bounds);
 		});
+	//----------------Search bar (END) -------------------------------------------
 	*/
-	 	var infowindow = new google.maps.InfoWindow();
 
-                google.maps.event.addListener(map, 'click', function(e){
-                        var marker = new google.maps.Marker({
-                                position: e.latLng,
-                                map: map
-                        });
-                        infowindow.setContent(e.latLng.toString());
-                        infowindow.open(map, marker);
+	//--------------------Marker infowindow and labeling (START)------------------
+	 	
+		var infowindow = new google.maps.InfoWindow();
+		var marker;
+                google.maps.event.addListener(map, 'rightclick', function(e){
+                	if(marker != null){
+				marker.setVisible(false);
+				marker = null;
+			}
+			marker = new google.maps.Marker({
+       	                        position: e.latLng,
+               	                map: map,
+				label: 'T',
+				title: 'click for coordinates and doubleclick to remove',
+				visible: true
+               	        });
+               	        infowindow.setContent(e.latLng.toString());
+               	        infowindow.open(map, marker);
+			
+			var coordinates = e.latLng.toString();
+			insertIntoArray(coordinates);
 
-                        marker.addListener('click', function(e){
-                                infowindow.setContent(e.latLng.toString());
-                                infowindow.open(map, marker);
-                        });
+               	        marker.addListener('click', function(e){
+                       	        infowindow.setContent(e.latLng.toString());
+                       	        infowindow.open(map, marker);			
+              		});
+			marker.addListener('rightclick', function(e){
+				marker.setVisible(false);
+				document.getElementById("insert").style.display = "none";
+				infowindow.close();
+			});
                 });
-
+		
                 var labels = 'ABCDEFGHIJKLMNOPQRSTUVXYÅÄÖ';
-
                 var markers = locations.map(function(location, i){
                         var marker = new google.maps.Marker({
                                 position: location,
@@ -305,27 +441,18 @@
                         });
        			return marker;
                 });
-             var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
-   
+	//----------Marker infowindow and labeling (END)-----------------------------
+	
+             var markerCluster = new MarkerClusterer(map, markers,
+		{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 	}
-		
-		</script>
+</script>
+
 	<!--	input id="pac-inputt" class="controls" placeholder="Search Box after update" -->
-		</div>
-
-			<center>
-			<style>
-		div.scroll{
-			background-color: #FFFFFF;
-			width : 90%;
-			height : 130px;
-			overflow: scroll;
-		}
-			</style>
-
-			<div class = "scroll">
-				<p id="history"></p>
 			</div>
-			</center>
 	</body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js" integrity="sha384-XTs3FgkjiBgo8qjEjBk0tGmf3wPrWtA6coPfQDfFEY8AnYJwjalXCiosYRBIBZX8" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>	
+
 </html>

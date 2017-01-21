@@ -18,7 +18,6 @@
 <body>
 <div w3-include-html="overhead.html"></div>
 
-
 <script>
 w3IncludeHTML();
 </script>
@@ -33,6 +32,7 @@ w3IncludeHTML();
 	</center>
 <?php
 		if(isset($_POST['submit'])){
+
 			if(getimagesize($_FILES['image']['tmp_name'])==false){
 				echo "please choose an image";
 			}else{
@@ -44,6 +44,7 @@ w3IncludeHTML();
 			}
 		}
 		displayimage();
+
 		function saveimage($name, $image){
 			$conn=mysql_connect("localhost","root","");
 			mysql_select_db("WMM",$conn);
@@ -55,6 +56,7 @@ w3IncludeHTML();
 				echo "<br/> Image not uploaded.";
 			}
 		}
+
 		function displayimage(){
 			$conn = mysql_connect("localhost","root","");
 			mysql_select_db("WMM",$conn);
@@ -76,6 +78,5 @@ w3IncludeHTML();
 ?>
 </div>
 </body>
-
 </html>
 
