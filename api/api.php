@@ -210,6 +210,55 @@ session_start();
 				exit;
 			}
 		}
+
+
+		private function uploadImage(){	
+
+			if(isset($_FILES["file"]["type"])){
+
+				$validextensions = array("jpeg", "jpg", "png");
+				$temporary = explode(".", $_FILES["file"]["name"]);
+				$file_extension = end($temporary);
+				if ((($_FILES["file"]["type"] == "image/png") || ($_FILES["file"]["type"] == "image/jpg") || ($_FILES["file"]["type"] == "image/jpeg")
+				) && ($_FILES["file"]["size"] < 10000000)//Approx. 100kb files can be uploaded.
+				&& in_array($file_extension, $validextensions)) {
+
+					if (!($_FILES["file"]["error"] > 0)){
+
+						
+
+
+						$fileName = $_FILES['file']['name'];
+						$tmpName  = $_FILES['file']['tmp_name'];
+						$fileSize = $_FILES['file']['size'];
+						$fileType = $_FILES['file']['type'];
+
+						$fp      = fopen($tmpName, 'r');
+						$content = fread($fp, filesize($tmpName));
+						$content = addslashes($content);
+						fclose($fp);
+
+						if(!get_magic_quotes_gpc())
+						{
+						    $fileName = addslashes($fileName);
+						}
+						
+
+						$query = "INSERT INTO upload (name, size, type, content ) ".
+						"VALUES ('$fileName', '$fileSize', '$fileType', '$content')";
+
+						mysql_query($query) or die('Error, query failed'); 
+
+						$this->response(json_encode("<br>File $fileName uploaded<br>"),200);
+				}
+				else{
+					$this->response(json_encode("<span id='invalid'>***Invalid file Size or Type***<span>"),204);
+				}
+			}
+
+		}
+	}
+
 		
 		private function getUserMaps(){
 

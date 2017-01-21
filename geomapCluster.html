@@ -33,14 +33,15 @@
 //				console.log("Everything ready and sending info.");
 				var foo = JSON.parse(xhttp.responseText);
 				optForm = document.getElementById("dropMyMaps");
-				optForm2 = document.getElementById("dropMyMaps2");				
+				optForm2 = document.getElementById("dropMyMaps2");
+				
 				for (var i = 0; i < Object.keys(foo).length; i++){
 					opt = document.createElement("option");
 					opt2 = document.createElement("option");
 					
 					opt.textContent = foo[i].name;
 					opt2.textContent = foo[i].name;
-					optForm.appendChild(opt); //Needs specific append to index i.
+					optForm.appendChild(opt); 
 					optForm2.appendChild(opt2);
 				}
 				
@@ -225,7 +226,19 @@
                                	console.log(response + " - it worked ");
 				document.getElementById("insert").style.backgroundColor = "green";
 				document.getElementById("insert").value = "Inserted!";
-				userMaps();
+				
+				optForm = document.getElementById("dropMyMaps");
+                                optForm2 = document.getElementById("dropMyMaps2");
+
+				var newMap = document.createElement("option");
+				var newMap2 = document.createElement("option");
+
+				newMap.textContent = document.getElementById("newName").value;
+				newMap2.textContent = document.getElementById("newName").value;
+	
+                                optForm.appendChild(newMap);
+                                optForm2.appendChild(newMap2);
+
                        	}else{
                                	console.log("server not ready for request");
                    	}
