@@ -225,9 +225,6 @@ session_start();
 
 					if (!($_FILES["file"]["error"] > 0)){
 
-						
-
-
 						$fileName = $_FILES['file']['name'];
 						$tmpName  = $_FILES['file']['tmp_name'];
 						$fileSize = $_FILES['file']['size'];
@@ -242,7 +239,6 @@ session_start();
 						{
 						    $fileName = addslashes($fileName);
 						}
-						
 
 						$query = "INSERT INTO upload (name, size, type, content ) ".
 						"VALUES ('$fileName', '$fileSize', '$fileType', '$content')";
@@ -292,54 +288,44 @@ session_start();
 			}
 			$this->response('',204);	// If no records "No Content" status
 		}
-		
-		private function storeImage(){
-			$image = $_REQUEST['var1'];
-			if(getimagesize($_FILES[$image]['tmp_name']) == false){
-				echo "Please choose an image";
-			}else{
-				echo "image is atleast something";
-			}
-			/*
-			else{
-				$image = addslashes($_FILES['image']['tmp_name']);
-				$name = addslashes($_FILES['image']['name']);
-				$image = file_get_contents($image);
-				$image = base64_encode($image);
- 
-				$sql = "INSERT INTO images (name, image) VALUES ('$name','$image')";
-				$result = mysql_query($sql);
-				if($result){
-					echo "<br/> Image Uploaded.";
-				}else{
-					echo "<br/> Image not uploaded.";
-				}
-			}
-			*/
-		}
 
 		private function displayImages(){
-			$sql = "SELECT * from images WHERE '1'";
+			$sql = "SELECT * from upload WHERE '1'";
 			$result = mysql_query($sql);
+			$images = array();
+			while($row = mysql_fetch_assoc($result)){
+				$images[] = $row['content'];
+			}
+			echo "<table border = '1'>
+			<tr>
+			</tr>";
+			$count = 0;
+			foreach($images as $image){
+				echo "<th>" . '<img height="250" width="250" src ="data:image/jpeg;base64,'. base64_encode($image) .'"/>';
+				$count += 1;
+				if($count % 6 == 0){
+					echo "<tr>";
+				}else{
+					echo "<th>";
+				}
+				//echo "<th>" . '<img height="300" width="300" src ="data:image/jpeg;base64,'. base64_encode($image) .'"/>';
+			}
+			echo "</table>";
+
+		/*
 			echo "<table border = '1'>
 			<tr>
 			<th> id </th>
 			<th> image </th>
 			</tr>";
-			$count = 0;
 			while($row = mysql_fetch_array($result)){
-				if($count % 3 == 0){
-					$count+=1;
-					//echo "<tr>";
-					echo "<th>" . $row['id'] . "</th>";
-					echo "<th>" . '<img height="300" width="300" src="data:image;base64,'.$row[2].'">'. "</th>";
-				}else{
 				echo "<tr>";
 				echo "<th>" . $row['id'] . "</th>";
-			        echo "<th>" . '<img height="300" width="300" src="data:image;base64,'.$row[2].'">'. "</th>";
-				}
+			        echo "<th>" . '<img height="300" width="300" src="data:image;base64,'.$row['4'].'">'. "</th>";
 			}
 			echo "</table>";
+
+		*/
 		}
 
 		private function deleteUser(){
