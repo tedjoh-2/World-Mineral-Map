@@ -18,16 +18,18 @@
     
 <script src="http://www.w3schools.com/lib/w3data.js"></script>
 
-<style>
-	div.scroll{
-		overflow: scroll;
-                width:95%;
-		height:300px;
-                background-color: #F5F5DC;
-                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2) 0 6px 20px 0 rgba(0,0,0,0.19);
-        }
-	
-</style>
+<script>
+	function display(){
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function(){
+			if(request.readyState == 4 && request.status == 200){
+				document.getElementById("imgGallery").innerHTML = request.responseText;
+			}
+		}
+		request.open("GET","/api/displayImages/", true);
+		request.send(null);
+	}
+</script>
 </head>
 <body>
 <div w3-include-html="overhead.html"></div>
@@ -35,43 +37,37 @@
 <script>
 w3IncludeHTML();
 </script>
-<div class="container" id = "form">
+<div class="container-fluid" id = "form">
 	<center>
 	<hr id="line1">
 	<form id="data" action="" method="post" enctype="multipart/form-data">
-	<div id="image_preview"><img id="previewing" src="img/no_image.png" /></div>
+	<div class="img-div"></div>
+	<div class="img-div" id="image_preview"><img class="dynImg" id="previewing" src="img/no-preview.jpg" /></div>
+	<div class="img-div"></div>
 	<hr id="line">
 	<label>Select Your Image</label><br/>
 	<input type="hidden" name="MAX_FILE_SIZE" value="10000000" />	
 	<input type="file" name="file" id="file" required />
 	<input type="submit" value="Upload"  class="btn btn-success">
-	<input type="button" onclick="display();" value="Display" class="btn btn-success">
 	</form>
 	<hr>
 
+
 	<P> Gallery </P>
 	</center>
-	<div class = "scroll" id="scrollClass">
+	<div id="imgGallery">
+		<script type="text/javascript">
+			display();
+		</script>	
+
 	</div>
 </div>
 </body>
 
-<script>
-	function display(){
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function(){
-			if(request.readyState == 4 && request.status == 200){
-				document.getElementById("scrollClass").innerHTML = request.responseText;
-			}
-		}
-		request.open("GET","/api/displayImages/", true);
-		request.send(null);
-	}
-</script>
+
 
 <script>
 	
-	//function sendData(){
 	 $("#data").submit(function(e) {
             var formData = new FormData($(this)[0]);
             $.ajax({
@@ -98,7 +94,7 @@ w3IncludeHTML();
 	var match= ["image/jpeg","image/png","image/jpg"];
 	if(!((imagefile==match[0]) || (imagefile==match[1]) || (imagefile==match[2])))
 		{
-		$('#previewing').attr('src','img/no_image.png');
+		$('#previewing').attr('src','img/no-preview.jpg');
 		$("#message").html("<p id='error'>Please Select A valid Image File</p>"+"<h4>Note</h4>"+"<span id='error_message'>Only jpeg, jpg and png Images type allowed</span>");
 		return false;
 	}
@@ -123,5 +119,4 @@ w3IncludeHTML();
 
 
 </html>
-
 

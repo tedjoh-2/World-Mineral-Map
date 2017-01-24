@@ -30,7 +30,6 @@
     		var xhttp = new XMLHttpRequest();
 		xhttp.onreadystatechange = function(){
 			if(xhttp.readyState == 4 && xhttp.status == 200){ //Can also check this.status == 500 if website is http:
-//				console.log("Everything ready and sending info.");
 				var foo = JSON.parse(xhttp.responseText);
 				optForm = document.getElementById("dropMyMaps");
 				optForm2 = document.getElementById("dropMyMaps2");
@@ -46,12 +45,7 @@
 				}
 				
 			}
-//			console.log("readyState : " + xhttp.readyState);
-//			console.log("stats : " + xhttp.status);
 		}
-//		console.log("api/getUserMaps/");
-//		console.log("ready state: "+xhttp.readyState);
-//		console.log("status: "+xhttp.status);
 		xhttp.open("GET", "api/getUserMaps/", true);
 		xhttp.send(null);
 	}
@@ -75,23 +69,6 @@
 			xmlRe.send(null);
 		}
 	}
-
-	function clickMe(){
-	        var one = document.getElementById("mapname").value;
-		var two = document.getElementById("x").value;
-		var three = document.getElementById("y").value;
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function(){
-			if(request.readyState == 4 && request.status == 200){
-				var response = request.responseText;
-				updateMap(response);
-	       		}
-		}
-		
-		request.open("POST","/api/insertMap/"+one+"/"+two+"/"+three, true);
-		request.send(null);
-	}
-
     </script>
 
   </head>
@@ -125,9 +102,6 @@
       <div class="col-sm-6 col-md-4">
         <select id="dropMyMaps2" class="form-control">
 		<option></option>
-          <script type="text/javascript">
-          	//userMaps(); //Not needed.
-          </script>
         </select>
 
        <input type="text" id="newName" name="newName"class="form-control form-control-lg" placeholder="New map">
@@ -139,7 +113,6 @@
     </center>
      <br>
 
-	<!-- input id="pac-input" class="controls" placeholder="Search box" -->
 		<div class="map" id="map">
 		<center>
 <script>
@@ -148,7 +121,7 @@
 	
 	function insertIntoArray(coordinates){
 		if(mapCoordinates.length > 0){
-			console.log("size was not zero, hard reset");
+			//console.log("size was not zero, hard reset");
 			mapCoordinates.length = 0;
 		}
 		
@@ -159,9 +132,7 @@
 		var lng = split[1];
 		mapCoordinates.push(lat);
 		mapCoordinates.push(lng);	
-		mapCoordinates.forEach(function(arr){
-			console.log(arr + " - mapCoordinates");
-		});
+
 		document.getElementById("insert").style.display = "block";
 		document.getElementById("insert").value = "Insert?";
 		document.getElementById("insert").style.backgroundColor = "blue";
@@ -182,7 +153,7 @@
 		}else{
 			alert("No maps");
 		}
-		console.log(lat + " - lat, " + lng + " - lng ");
+	//	console.log(lat + " - lat, " + lng + " - lng ");
 	
 		// ------ Ajax request to database (START) --------------
 		var request = new XMLHttpRequest();
@@ -191,7 +162,7 @@
 				var response = request.responseText;
 				document.getElementById("insert").value = "Removed";
 				document.getElementById("insert").style.backgroundColor = "red";
-				console.log(response + " - worked, item removed from database");
+			//	console.log(response + " - worked, item removed from database");
 			}
 		}
 		// -------- Ajax request to database (END) -----------------
@@ -213,17 +184,15 @@
 		var sel = document.getElementById("dropMyMaps2");
 		var newMapInput = document.getElementById("newName").value;
 		var map = sel.options[sel.selectedIndex].text;
-		if(map.length == 0){
-			console.log("sel is null");
+		if(map.length == 0 && newMapInput.length != 0){
 			map = newMapInput;
 		}		
-		console.log(map + " - map");
-		console.log(sel + " - sel " + newMapInput + " - newMapInput");
-               	var request = new XMLHttpRequest();
+               	
+		var request = new XMLHttpRequest();
                	request.onreadystatechange = function(){
                        	if(request.readyState == 4 && request.status == 200){
                                	var response = request.responseText;
-                               	console.log(response + " - it worked ");
+                       			
 				document.getElementById("insert").style.backgroundColor = "green";
 				document.getElementById("insert").value = "Inserted!";
 				
@@ -240,7 +209,6 @@
                                 optForm2.appendChild(newMap2);
 
                        	}else{
-                               	console.log("server not ready for request");
                    	}
                	}
 		
@@ -344,7 +312,6 @@
 	}	
 	    
 	function initMap() {
-		console.log("initMap()");
 	
 		var locations = [];
 	
@@ -461,7 +428,6 @@
 	}
 </script>
 
-	<!--	input id="pac-inputt" class="controls" placeholder="Search Box after update" -->
 			</div>
 	</body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7" crossorigin="anonymous"></script>
