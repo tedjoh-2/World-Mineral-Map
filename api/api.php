@@ -472,6 +472,7 @@ session_start();
 		private function logout(){
 			$id = $_SESSION['id'];
 			if($id){
+				$_SESSION = [];
 				$this->response(json_encode("Logout successful"), 200);
 				//echo "logout successful, farwell my love";
 				session_destroy();
